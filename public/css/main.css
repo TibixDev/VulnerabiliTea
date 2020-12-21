@@ -1,0 +1,71 @@
+body {
+    font-family: 'Raleway', sans-serif;
+}
+
+.titleContainer {
+    /*border: 2px solid greenyellow;*/
+    background-color: #814A26;
+}
+
+/*.titleRow {
+    border: 2px solid red;
+}
+
+.titleCol {
+    border: 2px solid blue;
+}*/
+
+.titleHeader {
+    color: white;
+    margin: 2rem 0 0 0;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 5rem;
+}
+
+.subTitleHeader {
+    color: white;
+    margin-bottom: 2rem;
+    font-weight: 100;
+    font-style: italic;
+    font-size: 2.5rem;
+}
+
+.startButton {
+    font-size: 1rem;
+    background-color: #A7C957;
+    border-color: #A7C957;
+    height: 5rem;
+    width: 15rem;
+    border-radius: 0.5rem;
+}
+
+.startButton:hover {
+    background-color: #8cb922;
+    border-color: #8cb922;
+}
+
+.featureCardHeader {
+    color: white;
+    background-color: #814A26;
+    border-radius: 1rem 1rem 0 0;
+}
+
+/* Mobile Media-Queries */
+
+@media screen and (max-width: 480px) {
+    .titleHeader {
+        margin-bottom: 1.2rem;
+        font-size: 2rem;
+    }
+    .subTitleHeader {
+        margin-bottom: 2rem;
+        font-size: 1.5rem;
+    }
+    .startButton {
+        font-size: 1.2rem;
+        height: 4rem;
+        width: 12rem;
+        border-radius: 0.5rem;
+    }
+}

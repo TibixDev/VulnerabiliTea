@@ -1,0 +1,20 @@
+html
+    head
+        title VulnerabiliTea - Register
+    body
+        h2 VulnerabiliTea - Register
+        div
+            form(action='/register', method='post')
+                label(for='email') Email
+                br
+                input.fInput#email(type='text', name='email')
+                br
+                label(for='nickname') Nickname
+                br
+                input.fInput#nickname(type='text', name='nickname')
+                br
+                label(for='password') Password
+                br
+                input.fInput#password(type='text', name='password')
+                br
+                button Submit

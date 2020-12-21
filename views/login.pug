@@ -1,0 +1,16 @@
+html
+    head
+        title VulnerabiliTea - Login
+    body
+        h2 VulnerabiliTea - Login
+        div
+            form(action='/login', method='post')
+                label(for='email') Email
+                br
+                input.fInput#email(type='text', name='email')
+                br
+                label(for='password') Password
+                br
+                input.fInput#password(type='text', name='password')
+                br
+                button Submit
