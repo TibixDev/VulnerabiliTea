@@ -5,7 +5,7 @@ let user = {
         type: String,
         required: true
     },
-    nickname: {
+    username: {
         type: String,
         required: true
     },

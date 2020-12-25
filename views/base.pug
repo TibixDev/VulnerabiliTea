@@ -1,0 +1,17 @@
+html
+    head
+        title VulnerabiliTea - #{title}
+        include includes\head_includes.pug
+    body
+        include includes\body_includes.pug
+        header.container-fluid.mb-3.topNavContainer
+            .row.topNavRow.justify-content-center
+                .col-12.lmCol.text-center.d-flex.align-items-center
+                    i.fas.fa-bars.fa-2x.baseHamburgerMenu
+                    i.fas.fa-mug-hot.fa-2x.baseTitleIco
+                    h1.baseTitleHeader VulnerabiliTea
+                    // hacky solution, but it works for now
+                    .mb-5
+        block content
+        footer.footer.text-center.mt-3
+            p.my-2.copyright Copyright (c) 2020 VulnerabiliTea — Build 2020/12/22

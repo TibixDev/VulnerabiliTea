@@ -1,30 +1,35 @@
-mixin featureCard(title, content)
+mixin featureCard(faico, title, content)
     .col-lg-4.col-md-9.col-sm-12.cardCol.text-center.mt-3
-        .card
+        .card.mx-4
             .card-header.featureCardHeader
-                h3= title
+                .cardTitleHolder
+                    i.my-2(class=faico)
+                    h3.featureCardTitle= title
             .card-body
-                p.card-text= content
+                p.card-text.featureCardContent= content
 html
     head
         title VulnerabiliTea
-        meta(name='viewport' content='width=device-width, initial-scale=1.0')
-        link(rel='stylesheet' href='/css/bootstrap.min.css' type='text/css')
-        link(rel='stylesheet' href='/css/main.css' type='text/css')
-        link(rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap' type='text/css')
+        include includes\head_includes.pug
     body
-        script(src='/js/bootstrap.bundle.min.js')
-        .container-fluid.titleContainer
+        include includes\body_includes.pug
+        header.container-fluid.mb-3.titleContainer
             .row.titleRow.justify-content-center
                 .col-lg-4.col-md-12.titleCol.text-center
-                    h1.titleHeader VulnerabiliTea
+                    .titleIcoText.align-items-center
+                        i.fas.fa-mug-hot.fa-10x.mt-3.titleIco
+                        h1.titleHeader VulnerabiliTea
                     h2.subTitleHeader Managing security vulnerabilities has never been easier
-                    button.btn.btn-primary.startButton(href='#' role='button') Get Started ❯
+                    button.btn.btn-primary.startButton(href='/register' role='button') Get Started ❯
                     // hacky solution, but it works for now
                     .mb-5
-        .container-fluid.featureCardsContainer
+        .container-fluid.featureCardsContainer.mb-5
+            .row.titleRow.justify-content-center
+                .col-lg-6.col-md-12.titleCol.text-center
+                    h2.featureQuestionHeader Why choose us?
             .row.featureCardsRow.justify-content-center
-                +featureCard('Privacy Focused', 'We respect your privacy. We will never give access to your information to any third-parties. We are also commited to store as little information about you as possible for our services to function properly.')
-                +featureCard('Easy to Use', 'We have tried to make our user-interface straightforward. Creating new security vulnerability reports and sharing it with friends and companies is just a few clicks away. We suggest you give it a try.')
-                +featureCard('Open Source', 'VulnerabiliTea is fully open source. If you\'d like to do so, you can help us by contributing to this projects GitHub page. There you can report bugs, help us develop, or use VulnerabiliTea for a project of your own.')
-
+                +featureCard('fas fa-user-secret fa-3x', 'Privacy Focused', 'We respect your privacy. We will never give access to your information to any third-parties. We are also commited to store as little information about you as possible for our services to function properly.')
+                +featureCard('fas fa-gavel fa-3x', 'Easy to Use', 'We have tried to make our user-interface straightforward. Creating new security vulnerability reports and sharing it with friends and companies is just a few clicks away. We suggest you give it a try.')
+                +featureCard('fab fa-github fa-3x', 'Open Source', 'VulnerabiliTea is fully open source. If you\'d like to do so, you can help us by contributing to this projects GitHub page. There you can report bugs, help us develop, or use VulnerabiliTea for a project of your own.')
+        footer.footer.text-center.mt-3
+            p.my-2.copyright Copyright (c) 2020 VulnerabiliTea — Build 2020/12/22

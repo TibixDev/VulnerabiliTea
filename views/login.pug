@@ -1,16 +1,21 @@
-html
-    head
-        title VulnerabiliTea - Login
-    body
-        h2 VulnerabiliTea - Login
-        div
-            form(action='/login', method='post')
-                label(for='email') Email
-                br
-                input.fInput#email(type='text', name='email')
-                br
-                label(for='password') Password
-                br
-                input.fInput#password(type='text', name='password')
-                br
-                button Submit
+extends base.pug
+
+block content
+    .container-fluid.loginContainer
+        .row.justify-content-center.my-3.loginRow
+            .col-lg-4.col-md-8.col-sm-12.loginCol
+                form.loginForm(action='/login' method='post')
+                    .loginBar.text-center
+                        h2.pt-2.pb-2 Login
+                    .loginControls.align-items-center
+                        .input-group.px-4.my-3
+                            i.input-group-text.fas.fa-user.inpAddon(id='usrAddon')
+                            input.loginInput.form-control(type='text' placeholder='Username' required='required' aria-label='Username' aria-describedby='usrAddon')
+                        .input-group.px-4.my-3
+                            i.input-group-text.fas.fa-key.inpAddon(id='pwdAddon')
+                            input.loginInput.form-control(type='password' placeholder='Password' required='required' aria-label='Password' aria-describedby='pwdAddon')
+                        input#rememberMeBox.ms-4.mb-2.form-check-input(type='checkbox')
+                        label.ms-2.form-check-label(for='rememberMeBox') Remember Me
+                    .loginSubmit.text-center.py-3
+                        button.btn.btn-primary.loginButton(type='submit' role='button') Login
+                            i.fas.fa-sign-in-alt.fa.ms-2

@@ -1,20 +1,35 @@
-html
-    head
-        title VulnerabiliTea - Register
-    body
-        h2 VulnerabiliTea - Register
-        div
-            form(action='/register', method='post')
-                label(for='email') Email
-                br
-                input.fInput#email(type='text', name='email')
-                br
-                label(for='nickname') Nickname
-                br
-                input.fInput#nickname(type='text', name='nickname')
-                br
-                label(for='password') Password
-                br
-                input.fInput#password(type='text', name='password')
-                br
-                button Submit
+extends base.pug
+
+block content
+    .container-fluid.loginContainer
+        .row.justify-content-center.my-3.loginRow
+            .col-lg-4.col-md-8.col-sm-12.loginCol
+                if infos
+                    .infoBar
+                        each msg in infos
+                            p.note.note-danger
+                                strong Error: 
+                                | #{msg}
+                form.loginForm(action='/register' method='post')
+                    .loginBar.text-center
+                        h2.pt-2.pb-2 Register
+                    .loginControls.align-items-center
+                        .input-group.px-4.my-3
+                            i.input-group-text.fas.fa-envelope.inpAddon(id='emailAddon')
+                            input.loginInput.form-control(type='email' name='email' placeholder='Email' required='required' aria-label='Email' aria-describedby='emailAddon')
+                        .input-group.px-4.my-3
+                            i.input-group-text.fas.fa-user.inpAddon(id='usrAddon')
+                            input.loginInput.form-control(type='text' name='username' placeholder='Username' required='required' aria-label='Username' aria-describedby='usrAddon')
+                        .input-group.px-4.my-3
+                            i.input-group-text.fas.fa-key.inpAddon(id='pwdAddon')
+                            input.loginInput.form-control(type='password' name='password' placeholder='Password' required='required' aria-label='Password' aria-describedby='pwdAddon')
+                        .input-group.px-4.my-3
+                            i.input-group-text.fas.fa-key.inpAddon(id='pwdAddon')
+                            input.loginInput.form-control(type='password' name='passwordVerify' placeholder='Password (again)' required='required' aria-label='Password' aria-describedby='pwdAddon')
+                        input#tosBox.ms-4.mb-2.form-check-input(type='checkbox')
+                        
+                        label.ms-2.form-check-label(for='tosBox') I agree to the 
+                            a(href='#') Terms and Conditions
+                    .loginSubmit.text-center.py-3
+                        button.btn.btn-primary.loginButton(type='submit' role='button') Register
+                            i.fas.fa-sign-in-alt.fa.ms-2

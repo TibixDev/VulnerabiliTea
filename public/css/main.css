@@ -1,22 +1,26 @@
+/* Global CSS */
+
 body {
+    background-color: #ffe8d6;
+    color: white;
     font-family: 'Raleway', sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
+/* Index CSS */
+/* TODO: Fix some class names */
 .titleContainer {
-    /*border: 2px solid greenyellow;*/
     background-color: #814A26;
 }
 
-/*.titleRow {
-    border: 2px solid red;
+.titleIco {
+    font-size: 1rem;
 }
 
-.titleCol {
-    border: 2px solid blue;
-}*/
-
 .titleHeader {
-    color: white;
     margin: 2rem 0 0 0;
     font-weight: 300;
     font-style: italic;
@@ -24,7 +28,6 @@ body {
 }
 
 .subTitleHeader {
-    color: white;
     margin-bottom: 2rem;
     font-weight: 100;
     font-style: italic;
@@ -32,7 +35,7 @@ body {
 }
 
 .startButton {
-    font-size: 1rem;
+    font-size: 1.3rem;
     background-color: #A7C957;
     border-color: #A7C957;
     height: 5rem;
@@ -45,15 +48,92 @@ body {
     border-color: #8cb922;
 }
 
+.featureQuestionHeader {
+    font-size: 2.3rem;
+    font-weight: 300;
+    color: #814A26;
+}
+
 .featureCardHeader {
-    color: white;
     background-color: #814A26;
     border-radius: 1rem 1rem 0 0;
 }
 
+.featureCardContent {
+    font-size: 1.2rem;
+    color: black;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin-top: auto;
+    background-color: #814A26;
+    background: rgb(134, 83, 0);
+}
+
+/* Base CSS */
+
+.topNavContainer {
+    background-color: #814A26;
+}
+
+.baseHamburgerMenu {
+    margin-right: 1.5rem!important;
+}
+
+.baseTitleHeader {
+    font-weight: 300;
+}
+
+.baseTitleIco {
+    margin-right: 0.5rem!important;
+}
+
+/* Login CSS */
+.loginCol {
+    color: #000000;
+}
+
+.loginBar {
+    min-height: 3rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    background-color: #814A26;
+    color: white;
+    font-weight: 200 !important;
+}
+
+.loginForm {
+    background-color: white;
+    border-radius: 0.3rem;
+    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.048);
+}
+
+.loginInput {
+    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.048);
+}
+
+.inpAddon {
+    background-color: #814A26;
+    color: white;
+    width: 3.7rem;
+    line-height: 1.6!important;
+    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.048);
+}
+
+.loginButton {
+    width: 10rem;
+    height: 3rem;
+    font-size: 1rem;
+}
+
+/* !!!!!!!!!!!!!!!!!!!! */
 /* Mobile Media-Queries */
+/* !!!!!!!!!!!!!!!!!!!! */
 
 @media screen and (max-width: 480px) {
+    /* Index CSS */
     .titleHeader {
         margin-bottom: 1.2rem;
         font-size: 2rem;
@@ -67,5 +147,18 @@ body {
         height: 4rem;
         width: 12rem;
         border-radius: 0.5rem;
+    }
+
+    /* Base CSS */
+    .baseHamburgerMenu {
+        margin-right: 1.5rem!important;
+    }
+    
+    .baseTitleHeader {
+        visibility: hidden;
+    }
+    
+    .baseTitleIco {
+        margin: auto;
     }
 }

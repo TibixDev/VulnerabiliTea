@@ -9,7 +9,8 @@ const express = require('express'),
 /* Middlewares that enable use to:
         - Serve static pages
         - Use Pug to render
-        - Receive POST requests */
+        - Receive POST requests 
+        - Validate Inputs */
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
