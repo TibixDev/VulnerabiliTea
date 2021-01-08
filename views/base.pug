@@ -1,17 +1,34 @@
+mixin sidebarOption(faico, title, link)
+    .d-inline.w-100
+        a.mx-2.d-flex.align-items-center(href=link)
+            i(style='vertical-align: middle;' class=faico).me-3.float-start
+            | #{title}
+
 html
     head
         title VulnerabiliTea - #{title}
         include includes\head_includes.pug
     body
         include includes\body_includes.pug
-        header.container-fluid.mb-3.topNavContainer
+        header#header.container-fluid.topNavContainer
             .row.topNavRow.justify-content-center
-                .col-12.lmCol.text-center.d-flex.align-items-center
-                    i.fas.fa-bars.fa-2x.baseHamburgerMenu
+                .col-6.headerCol.text-center.d-flex.align-items-center
+                    .sidebarBtn(onclick='sidebarHandler();')
+                        i.fas.fa-bars.fa-2x.baseHamburgerMenu
                     i.fas.fa-mug-hot.fa-2x.baseTitleIco
                     h1.baseTitleHeader VulnerabiliTea
-                    // hacky solution, but it works for now
-                    .mb-5
-        block content
+                .col-6.headerCol.headerUserSpace.text-center.d-flex.align-items-center.justify-content-end
+                    a(href='#')
+                        i.fas.fa-user-circle.fa-2x.me-2(onclick='alert(1)')
+                        | Sign In
+        .magic.container-fluid
+        #sidebar.sidebar
+            +sidebarOption('fas fa-shield-alt', 'Activity', '#')
+            +sidebarOption('fas fa-tools', 'Manage', '#')
+            +sidebarOption('fas fa-users', 'Groups', '#')
+            +sidebarOption('fas fa-info-circle', 'About', '#')
+            +sidebarOption('fas fa-sign-out-alt', 'Logout', '#')
+        .content
+            block content
         footer.footer.text-center.mt-3
-            p.my-2.copyright Copyright (c) 2020 VulnerabiliTea — Build 2020/12/22
+            p.my-2.copyright Copyright (c) 2020 VulnerabiliTea — Dev Build 2020/12/22

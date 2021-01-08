@@ -4,13 +4,17 @@ const express = require('express'),
     path = require('path'),
     session = require('express-session'),
     MongoStore = require('connect-mongodb-session')(session),
-    Config = require('./config/config.json');
+    Config = require('./config/config.json'),
+    flash = require('connect-flash'),
+    cookieParser = require('cookie-parser');
 
 /* Middlewares that enable use to:
         - Serve static pages
         - Use Pug to render
-        - Receive POST requests 
-        - Validate Inputs */
+        - Receive better formatted POST requests
+        - Have Sessions
+        - Have Flashes (redirect messages)
+        - Have Routes */
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
@@ -29,6 +33,11 @@ app.use(session({
     saveUninitialized: true,
     secret: Config.session.secret
 }));
+
+// Configure Flashes and Cookies
+
+app.use(cookieParser());
+app.use(flash());
 
 // Routing requests to the correct routers
 

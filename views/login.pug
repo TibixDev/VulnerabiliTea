@@ -3,17 +3,23 @@ extends base.pug
 block content
     .container-fluid.loginContainer
         .row.justify-content-center.my-3.loginRow
-            .col-lg-4.col-md-8.col-sm-12.loginCol
+            .col-xl-4.col-lg-6.col-md-8.col-sm-12.loginCol
+                if msgs
+                    .infoBar
+                        each msg in msgs
+                            p.note(class=msg.noteType)
+                                strong #{msg.pretext}: 
+                                | #{msg.value}
                 form.loginForm(action='/login' method='post')
                     .loginBar.text-center
                         h2.pt-2.pb-2 Login
                     .loginControls.align-items-center
                         .input-group.px-4.my-3
-                            i.input-group-text.fas.fa-user.inpAddon(id='usrAddon')
-                            input.loginInput.form-control(type='text' placeholder='Username' required='required' aria-label='Username' aria-describedby='usrAddon')
+                            i.input-group-text.fas.fa-envelope.inpAddon(id='emailAddon')
+                            input.loginInput.form-control(type='email' name='email' placeholder='Email' required='required' aria-label='Email' aria-describedby='emailAddon')
                         .input-group.px-4.my-3
                             i.input-group-text.fas.fa-key.inpAddon(id='pwdAddon')
-                            input.loginInput.form-control(type='password' placeholder='Password' required='required' aria-label='Password' aria-describedby='pwdAddon')
+                            input.loginInput.form-control(type='password' name='password' placeholder='Password' required='required' aria-label='Password' aria-describedby='pwdAddon')
                         input#rememberMeBox.ms-4.mb-2.form-check-input(type='checkbox')
                         label.ms-2.form-check-label(for='rememberMeBox') Remember Me
                     .loginSubmit.text-center.py-3

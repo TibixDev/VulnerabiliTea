@@ -3,13 +3,13 @@ extends base.pug
 block content
     .container-fluid.loginContainer
         .row.justify-content-center.my-3.loginRow
-            .col-lg-4.col-md-8.col-sm-12.loginCol
-                if infos
+            .col-xl-4.col-lg-6.col-md-8.col-sm-12.loginCol
+                if msgs
                     .infoBar
-                        each msg in infos
-                            p.note.note-danger
-                                strong Error: 
-                                | #{msg}
+                        each msg in msgs
+                            p.note(class=msg.noteType)
+                                strong #{msg.pretext}: 
+                                | #{msg.value}
                 form.loginForm(action='/register' method='post')
                     .loginBar.text-center
                         h2.pt-2.pb-2 Register
@@ -26,8 +26,7 @@ block content
                         .input-group.px-4.my-3
                             i.input-group-text.fas.fa-key.inpAddon(id='pwdAddon')
                             input.loginInput.form-control(type='password' name='passwordVerify' placeholder='Password (again)' required='required' aria-label='Password' aria-describedby='pwdAddon')
-                        input#tosBox.ms-4.mb-2.form-check-input(type='checkbox')
-                        
+                        input#tosBox.ms-4.mb-2.form-check-input(type='checkbox' name='tosbox')
                         label.ms-2.form-check-label(for='tosBox') I agree to the 
                             a(href='#') Terms and Conditions
                     .loginSubmit.text-center.py-3
