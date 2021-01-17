@@ -238,6 +238,10 @@ html, body {
     height: 10rem;
 }
 
+.profileDesc {
+    font-size: large;
+}
+
 
 /* !!!!!!!!!!!!!!!!!!!! */
 /* Mobile Media-Queries */

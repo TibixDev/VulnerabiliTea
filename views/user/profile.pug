@@ -19,9 +19,13 @@ block content
                     .tab-pane.fade.show.active#infoTab(role="tabpanel" aria-labelledby="infoTabControl")
                         .container-fluid.color-brown
                             .row
-                                .col
+                                .col.profileDesc
                                     p.regDate Registred At: #{user.registerDate}
-                                    p Vulnerability Count: #{vulns.length || 0}
-                                    p Bio: Anything
+                                    p
+                                        strong Vulnerability Count: 
+                                        | #{vulns.length || 0}
+                                    p
+                                        strong Bio: 
+                                        | Nothing, yet.
                     .tab-pane.fade#caTab(role="tabpanel" aria-labelledby="caTabControl") Big Red Cocktent
                     .tab-pane.fade#vulnTab(role="tabpanel" aria-labelledby="vulnTabControl") Big Blue Cocktent

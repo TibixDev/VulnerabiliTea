@@ -9,7 +9,7 @@ router.get('/profile', helpers.isLoggedIn, async (req, res) => {
     let user = await User.findOne({
         _id: req.session.user
     });
-    let vulns = await Vulnerability.findOne({
+    let vulns = await Vulnerability.find({
         author: req.session.user
     });
     res.render('user/profile.pug', { user, vulns });
