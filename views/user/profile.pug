@@ -5,13 +5,13 @@ block content
         .row.justify-content-center.mb-2
             .col-xl-5.col-l-6.col-md-8.col-sm-10.text-center.color-brown
                 i.fas.fa-user-circle.fa-10x.mb-3(style='vertical-align: middle;')
-                h1 Tibix
+                h1 #{user.username}
         .row.justify-content-center
             .col-xl-5.col-l-6.col-md-8.col-sm-10.color-brown
                 ul.nav.nav-tabs.nav-justified.mb-3#profileTabs.rounded-top-3(role="tablist")
                     li.nav-item(role="presentation")
                         a.nav-link.active(id="infoTabControl" href="#infoTab" data-mdb-toggle="tab" role="tab" aria-controls="infoTab" aria-selected="true") Info
-                    li.nav-item(role="presentation")
+                    //li.nav-item(role="presentation")
                         a.nav-link(id="caTabControl" href="#caTab" data-mdb-toggle="tab" role="tab" aria-controls="caTab" aria-selected="false") Connected Accounts
                     li.nav-item(role="presentation")
                         a.nav-link(id="vulnTabControl" href="#vulnTab" data-mdb-toggle="tab" role="tab" aria-controls="vulnTab" aria-selected="false") Vulnerabilities
@@ -26,6 +26,22 @@ block content
                                         | #{vulns.length || 0}
                                     p
                                         strong Bio: 
-                                        | Nothing, yet.
+                                        | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sodales, nulla non maximus facilisis, leo libero molestie nulla, vel condimentum augue est non lectus. Quisque tristique tempus arcu ut accumsan. Quisque sollicitudin ipsum vitae ante facilisis, sit amet suscipit mi pretium. Maecenas venenatis neque in mollis luctus. Sed placerat, diam vitae tincidunt posuere, arcu neque ullamcorper magna, id scelerisque mi metus at velit. Nunc accumsan turpis vitae ex volutpat tempor. Mauris gravida sollicitudin lacus, vel rhoncus ex sollicitudin in. Donec tortor nunc, sodales sit amet pulvinar non, feugiat congue turpis. Nam placerat suscipit ultricies.
                     .tab-pane.fade#caTab(role="tabpanel" aria-labelledby="caTabControl") Big Red Cocktent
-                    .tab-pane.fade#vulnTab(role="tabpanel" aria-labelledby="vulnTabControl") Big Blue Cocktent
+                    .tab-pane.fade#vulnTab(role="tabpanel" aria-labelledby="vulnTabControl")
+                        .table-responsive
+                            table.table.table-striped.table-bordered.vulnTable
+                                thead.bg-lbrown.color-white.rounded-top
+                                    tr
+                                        th(scope="col") VTID
+                                        th(scope="col") CVSS
+                                        th(scope="col") Type
+                                        th(scope="col") Affected Product
+                                        th(scope="col") Affected Feature
+                                        th(scope="col") Status
+                                        th(scope="col") Bounty
+                                        th(scope="col") Date Reported
+                                tbody
+                                    if vulns
+                                        each vuln in vulns
+                                            +vulnTableEntry(vuln.vtid, vuln.cvss, vuln.type, vuln.affectedProduct, vuln.affectedFeature, vuln.status, vuln.bounty + '$', vuln.dateReported)

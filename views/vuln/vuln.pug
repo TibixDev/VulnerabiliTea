@@ -1,17 +1,5 @@
 extends ../base.pug
 
-mixin vulnTableEntry(vtid, cvss, type, affProd, affSubProd, status, bounty, dateReported)
-    tr
-        td
-            a(href='#') #{vtid}
-        td.font-weight-bold.cvssScore #{cvss}
-        td #{type}
-        td #{affProd}
-        td #{affSubProd}
-        td.font-weight-bold.status #{status}
-        td #{bounty}
-        td.dateReported #{dateReported}
-
 block content
     .container-fluid.justify-content-center.mt-3.vulnCont
         .row.justify-content-center
