@@ -110,7 +110,7 @@ router.post(
             .exists()
             .withMessage("There was no username specified.")
             .isAlphanumeric()
-            .withMessage("The username specified was not-alphanumeric.")
+            .withMessage("The username specified was not alphanumeric.")
             .isLength({ min: 3, max: 16 })
             .withMessage(
                 "The username specified didn't match the desired length (3-16 Characters)"
@@ -144,6 +144,11 @@ router.post(
             .withMessage("No password was specified in the repetition field.")
             .custom((value, { req }) => value === req.body.password)
             .withMessage("The passwords specified didn't match."),
+        body("tosBox")
+            .exists()
+            .withMessage(
+                "You must accept the Terms and Conditions to register."
+            ),
     ],
     async (req, res) => {
         const validationErrors = validationResult(req);
@@ -158,7 +163,6 @@ router.post(
             }
             return res.render("register", { msgs: errList });
         }
-        console.log(req.body.password);
         try {
             req.body.password = await bcrypt.hash(
                 req.body.password,
@@ -175,7 +179,6 @@ router.post(
                 });
             }
         }
-        console.log(req.body.password);
         let user = new User({
             email: req.body.email,
             username: req.body.username,
@@ -192,4 +195,27 @@ router.post(
     }
 );
 
+router.get("/logout", (req, res) => {
+    if (req.session.user) {
+        req.flash("msgs", [
+            {
+                noteType: "note-info",
+                pretext: "Info",
+                value: "Logged out successfully",
+            },
+        ]);
+        setTimeout(() => {
+            req.session.destroy();
+        }, 1000);
+    } else {
+        req.flash("msgs", [
+            {
+                noteType: "note-danger",
+                pretext: "Error",
+                value: "You need to be logged-in to log-out.",
+            },
+        ]);
+    }
+    res.redirect("/login");
+});
 module.exports = router;

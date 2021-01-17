@@ -1,0 +1,6 @@
+mixin noteMsg(msgs)
+    .infoBar
+        each msg in msgs
+            p.note(class=msg.noteType)
+                strong #{msg.pretext}: 
+                | #{msg.value}

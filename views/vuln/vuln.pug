@@ -1,0 +1,46 @@
+extends ../base.pug
+
+mixin vulnTableEntry(vtid, cvss, type, affProd, affSubProd, status, bounty, dateReported)
+    tr
+        td
+            a(href='#') #{vtid}
+        td.font-weight-bold.cvssScore #{cvss}
+        td #{type}
+        td #{affProd}
+        td #{affSubProd}
+        td.font-weight-bold.status #{status}
+        td #{bounty}
+        td.dateReported #{dateReported}
+
+block content
+    .container-fluid.justify-content-center.mt-3.vulnCont
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary
+                .row.justify-content-center
+                    .col-6
+                        h1 My Vulnerabilities (#{vulns.length || 0})
+                    .col-6.d-flex.align-items-center.justify-content-end
+                        a(href='/vuln/add')
+                            button.btn.btn-primary.rounded-pill(type='submit' role='button') Add +
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.mt-3
+                .table-responsive
+                    table.table.table-striped.table-bordered.vulnTable
+                        thead
+                            tr
+                                th(scope="col") VTID
+                                th(scope="col") CVSS
+                                th(scope="col") Type
+                                th(scope="col") Affected Product
+                                th(scope="col") Affected Feature
+                                th(scope="col") Status
+                                th(scope="col") Bounty
+                                th(scope="col") Date Reported
+                        tbody
+                            //+vulnTableEntry('VT-s7d4fx', '9.3', 'text-danger', 'SQL Injection', 'MineShop', 'Cart Coupon', '● Unpatched', '0$', '2020/12/23')
+                            //+vulnTableEntry('VT-c00m3r', '8.6', 'text-warning', 'Stored XSS', 'Krunker.io', 'Refferal URL', '● Patched', '500$', '2021/01/03')
+                            //+vulnTableEntry('VT-nu771n', '8.2', 'text-warning', 'Permanent DoS', 'Krunker.io', 'Refferal URL', '● Reported', 'text-warning', '500$', '2020/11/15')
+                            if vulns
+                                each vuln in vulns
+                                    +vulnTableEntry(vuln.vtid, vuln.cvss, vuln.type, vuln.affectedProduct, vuln.affectedFeature, vuln.status, vuln.bounty + '$', vuln.dateReported)
+

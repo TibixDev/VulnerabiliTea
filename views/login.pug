@@ -5,11 +5,7 @@ block content
         .row.justify-content-center.my-3.loginRow
             .col-xl-4.col-lg-6.col-md-8.col-sm-12.loginCol
                 if msgs
-                    .infoBar
-                        each msg in msgs
-                            p.note(class=msg.noteType)
-                                strong #{msg.pretext}: 
-                                | #{msg.value}
+                    +noteMsg(msgs)
                 form.loginForm(action='/login' method='post')
                     .loginBar.text-center
                         h2.pt-2.pb-2 Login

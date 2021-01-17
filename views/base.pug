@@ -1,7 +1,9 @@
+include includes\global_mixins.pug
+
 mixin sidebarOption(faico, title, link)
     .d-inline.w-100
-        a.mx-2.d-flex.align-items-center(href=link)
-            i(style='vertical-align: middle;' class=faico).me-3.float-start
+        a.d-flex.align-items-center(href=link)
+            i(style='vertical-align: middle;' class=faico).me-3.ms-2.float-start
             | #{title}
 
 html
@@ -15,20 +17,22 @@ html
                 .col-6.headerCol.text-center.d-flex.align-items-center
                     .sidebarBtn(onclick='sidebarHandler();')
                         i.fas.fa-bars.fa-2x.baseHamburgerMenu
-                    i.fas.fa-mug-hot.fa-2x.baseTitleIco
+                    a(href='/')
+                        i.color-white.fas.fa-mug-hot.fa-2x.baseTitleIco
                     h1.baseTitleHeader VulnerabiliTea
                 .col-6.headerCol.headerUserSpace.text-center.d-flex.align-items-center.justify-content-end
-                    a(href='#')
-                        i.fas.fa-user-circle.fa-2x.me-2(onclick='alert(1)')
-                        | Sign In
-        .magic.container-fluid
+                    .d-inline
+                        a#headerSignIn.d-flex.align-items-center.justify-content-end(href='/login')
+                            i(style='vertical-align: middle;' class='fas fa-user-circle fa-2x').me-2.ms-2.float-start
+                            | Sign In
         #sidebar.sidebar
             +sidebarOption('fas fa-shield-alt', 'Activity', '#')
-            +sidebarOption('fas fa-tools', 'Manage', '#')
+            +sidebarOption('fas fa-tools', 'Manage', '/vuln')
             +sidebarOption('fas fa-users', 'Groups', '#')
             +sidebarOption('fas fa-info-circle', 'About', '#')
-            +sidebarOption('fas fa-sign-out-alt', 'Logout', '#')
+            +sidebarOption('fas fa-sign-out-alt', 'Logout', '/logout')
+        .mb-5
         .content
             block content
-        footer.footer.text-center.mt-3
-            p.my-2.copyright Copyright (c) 2020 VulnerabiliTea — Dev Build 2020/12/22
+        footer#footer.text-center.mt-3
+            p.my-2.copyright Copyright (c) 2020 VulnerabiliTea — Dev Build 2021/01/09

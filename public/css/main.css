@@ -5,10 +5,26 @@ body {
     color: white;
     font-family: 'Raleway', sans-serif;
     /*height: 100vh;
-    margin: 0;
+    margin: 0;*/
     display: flex;
-    flex-direction: column;*/
+    flex-direction: column;
 }
+
+html, body {
+    /* IE 10-11 didn't like using min-height */
+    height: 100%;
+}
+
+/* CSS Classes */
+.color-primary {
+    color: #492a15;
+}
+
+.color-white {
+    color: white;
+}
+
+
 
 /* Index CSS */
 /* TODO: Fix some class names */
@@ -68,6 +84,7 @@ body {
 /* Base CSS */
 
 .topNavContainer {
+    max-width: 100vw;
     position: fixed;
     height: 3.5rem;
     transition: margin-left 0.7s;
@@ -94,17 +111,21 @@ body {
     margin-right: 0.5rem!important;
 }
 
-.magic {
-    height: 3.5rem;
+#headerSignIn {
+    color: white;
 }
 
-.footer {
+#footer {
     transition: margin-left 0.7s;
-    bottom: 0;
-    width: 100%;
+    /*position: absolute;
     margin-top: auto;
+    bottom: 0;
+    width: 100%;*/
+    flex-shrink: 0;
     background-color: #814A26;
     background: rgb(134, 83, 0);
+    transition: margin-left 0.7s;
+    overflow-x: hidden;;
 }
 
 .sidebar {
@@ -115,7 +136,7 @@ body {
     left: 0;
     background-color: #492a15;
     color: white;
-    padding-top: 1rem;
+    margin-top: 3.5rem;
     overflow-x: hidden;
     transition: 0.5s;
 }
@@ -135,6 +156,7 @@ body {
 }
 
 .content {
+    flex: 1 0 auto;
     transition: margin-left 0.7s;
     overflow-x: hidden;
 }
@@ -176,6 +198,30 @@ body {
     font-size: 1rem;
 }
 
+/* Vuln CSS */
+
+.vulnCont h1 {
+    color: #814A26;
+}
+
+.vulnTable {
+    font-size: 0.9rem;
+    border-color: #62391d;
+}
+
+/* Vuln Add CSS */
+.vulnRTEditor {
+    color: black;
+    background-color: white;
+}
+
+.vulnSubmitBtn {
+    width: 50%;
+    height: 5rem;
+    font-size: 1.3rem;
+}
+
+
 /* !!!!!!!!!!!!!!!!!!!! */
 /* Mobile Media-Queries */
 /* !!!!!!!!!!!!!!!!!!!! */
@@ -208,5 +254,12 @@ body {
     
     .baseTitleIco {
         margin: auto;
+    }
+
+    /* Vuln CSS */
+    .vulnSubmitBtn {
+        width: 70%;
+        height: 5rem;
+        font-size: 1.3rem;
     }
 }
