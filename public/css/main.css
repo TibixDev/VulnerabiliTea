@@ -233,6 +233,10 @@ html, body {
     font-size: 1.3rem;
 }
 
+.dateReported {
+    min-width: 17rem;
+}
+
 /* Profile CSS */
 .profileNameCol {
     height: 10rem;

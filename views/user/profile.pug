@@ -15,8 +15,9 @@ block content
                         a.nav-link(id="caTabControl" href="#caTab" data-mdb-toggle="tab" role="tab" aria-controls="caTab" aria-selected="false") Connected Accounts
                     li.nav-item(role="presentation")
                         a.nav-link(id="vulnTabControl" href="#vulnTab" data-mdb-toggle="tab" role="tab" aria-controls="vulnTab" aria-selected="false") Vulnerabilities
-                .tab-content#profileTabs-content
-                    .tab-pane.fade.show.active#infoTab(role="tabpanel" aria-labelledby="infoTabControl")
+            .row.justify-content-center
+                .tab-content#profileTabs-content.d-flex.justify-content-center
+                    .tab-pane.fade.show.active#infoTab.col-xl-5.col-l-6.col-md-8.col-sm-10(role="tabpanel" aria-labelledby="infoTabControl")
                         .container-fluid.color-brown
                             .row
                                 .col.profileDesc
@@ -28,7 +29,7 @@ block content
                                         strong Bio: 
                                         | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sodales, nulla non maximus facilisis, leo libero molestie nulla, vel condimentum augue est non lectus. Quisque tristique tempus arcu ut accumsan. Quisque sollicitudin ipsum vitae ante facilisis, sit amet suscipit mi pretium. Maecenas venenatis neque in mollis luctus. Sed placerat, diam vitae tincidunt posuere, arcu neque ullamcorper magna, id scelerisque mi metus at velit. Nunc accumsan turpis vitae ex volutpat tempor. Mauris gravida sollicitudin lacus, vel rhoncus ex sollicitudin in. Donec tortor nunc, sodales sit amet pulvinar non, feugiat congue turpis. Nam placerat suscipit ultricies.
                     .tab-pane.fade#caTab(role="tabpanel" aria-labelledby="caTabControl") Big Red Cocktent
-                    .tab-pane.fade#vulnTab(role="tabpanel" aria-labelledby="vulnTabControl")
+                    .tab-pane.fade#vulnTab.col-xl-7.col-l-9.col-md-10.col-sm-12(role="tabpanel" aria-labelledby="vulnTabControl")
                         .table-responsive
                             table.table.table-striped.table-bordered.vulnTable
                                 thead.bg-lbrown.color-white.rounded-top

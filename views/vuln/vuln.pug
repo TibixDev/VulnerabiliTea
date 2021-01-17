@@ -25,9 +25,6 @@ block content
                                 th(scope="col") Bounty
                                 th(scope="col") Date Reported
                         tbody
-                            //+vulnTableEntry('VT-s7d4fx', '9.3', 'text-danger', 'SQL Injection', 'MineShop', 'Cart Coupon', '● Unpatched', '0$', '2020/12/23')
-                            //+vulnTableEntry('VT-c00m3r', '8.6', 'text-warning', 'Stored XSS', 'Krunker.io', 'Refferal URL', '● Patched', '500$', '2021/01/03')
-                            //+vulnTableEntry('VT-nu771n', '8.2', 'text-warning', 'Permanent DoS', 'Krunker.io', 'Refferal URL', '● Reported', 'text-warning', '500$', '2020/11/15')
                             if vulns
                                 each vuln in vulns
                                     +vulnTableEntry(vuln.vtid, vuln.cvss, vuln.type, vuln.affectedProduct, vuln.affectedFeature, vuln.status, vuln.bounty + '$', vuln.dateReported)

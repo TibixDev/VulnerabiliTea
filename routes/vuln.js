@@ -98,4 +98,11 @@ router.post(
     }
 );
 
+router.get("/id/:vulnID", async () => {
+    let vuln = await Vulnerability.findOne({
+        vtid: req.params.vulnID
+    })
+
+});
+
 module.exports = router;
