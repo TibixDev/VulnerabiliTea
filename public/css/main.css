@@ -16,12 +16,24 @@ html, body {
 }
 
 /* CSS Classes */
-.color-primary {
-    color: #492a15;
+.color-brown {
+    color: #814A26!important;
 }
 
 .color-white {
-    color: white;
+    color: white!important;
+}
+
+.bg-brown {
+    background-color: #492a15!important;
+}
+
+.bg-lbrown {
+    background-color: #62391d!important;
+}
+
+.bg-transparent {
+    background-color: transparent!important;
 }
 
 
@@ -219,6 +231,11 @@ html, body {
     width: 50%;
     height: 5rem;
     font-size: 1.3rem;
+}
+
+/* Profile CSS */
+.profileNameCol {
+    height: 10rem;
 }
 
 

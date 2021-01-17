@@ -136,4 +136,7 @@ $(() => {
     $('.dateReported').each((i, obj) => {
         $(obj).text(new Date($(obj).text()).toUTCString());
     });
+    $('.regDate').each((i, obj) => {
+        $(obj).text("Register Date: " + new Date($(obj).text()).toUTCString());
+    });
 });

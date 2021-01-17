@@ -1,0 +1,27 @@
+extend ../base.pug
+
+block content
+    .container-fluid.mt-5
+        .row.justify-content-center.mb-2
+            .col-xl-5.col-l-6.col-md-8.col-sm-10.text-center.color-brown
+                i.fas.fa-user-circle.fa-10x.mb-3(style='vertical-align: middle;')
+                h1 Tibix
+        .row.justify-content-center
+            .col-xl-5.col-l-6.col-md-8.col-sm-10.color-brown
+                ul.nav.nav-tabs.nav-justified.mb-3#profileTabs.rounded-top-3(role="tablist")
+                    li.nav-item(role="presentation")
+                        a.nav-link.active(id="infoTabControl" href="#infoTab" data-mdb-toggle="tab" role="tab" aria-controls="infoTab" aria-selected="true") Info
+                    li.nav-item(role="presentation")
+                        a.nav-link(id="caTabControl" href="#caTab" data-mdb-toggle="tab" role="tab" aria-controls="caTab" aria-selected="false") Connected Accounts
+                    li.nav-item(role="presentation")
+                        a.nav-link(id="vulnTabControl" href="#vulnTab" data-mdb-toggle="tab" role="tab" aria-controls="vulnTab" aria-selected="false") Vulnerabilities
+                .tab-content#profileTabs-content
+                    .tab-pane.fade.show.active#infoTab(role="tabpanel" aria-labelledby="infoTabControl")
+                        .container-fluid.color-brown
+                            .row
+                                .col
+                                    p.regDate Registred At: #{user.registerDate}
+                                    p Vulnerability Count: #{vulns.length || 0}
+                                    p Bio: Anything
+                    .tab-pane.fade#caTab(role="tabpanel" aria-labelledby="caTabControl") Big Red Cocktent
+                    .tab-pane.fade#vulnTab(role="tabpanel" aria-labelledby="vulnTabControl") Big Blue Cocktent
