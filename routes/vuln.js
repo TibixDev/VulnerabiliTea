@@ -5,15 +5,15 @@ const express = require("express"),
     multer = require("multer"),
     upload = multer(),
     { body, validationResult } = require("express-validator"),
-    sanitizeHtml = require("sanitize-html"),
     crypto = require("crypto");
 
 // Model Imports
+const User = require("../db/models/user.js");
 const Vulnerability = require("../db/models/vulnerability.js");
 
 // Handle: Vulnerability Management
 router.get("/", helpers.isLoggedIn, async (req, res) => {
-    let vulns = await Vulnerability.find({author: req.session.user})
+    let vulns = await Vulnerability.find({ author: req.session.user });
     res.render("vuln/vuln", { vulns });
 });
 
@@ -46,7 +46,14 @@ router.post(
         body("vulnType")
             .exists()
             .withMessage("There was no vulnerability type specified.")
-            .isIn(["Reflective XSS", "Stored XSS", "SSRF", "RCE", "CSRF", "Other"])
+            .isIn([
+                "Reflective XSS",
+                "Stored XSS",
+                "SSRF",
+                "RCE",
+                "CSRF",
+                "Other",
+            ])
             .withMessage("The vulnerability type specified was invalid"),
         body("cvssScore")
             .exists()
@@ -64,9 +71,7 @@ router.post(
             ),
         body("bountyAmount")
             .isFloat()
-            .withMessage(
-                "The bounty specified was not a number."
-            ),
+            .withMessage("The bounty specified was not a number."),
     ],
     async (req, res) => {
         const validationErrors = validationResult(req);
@@ -81,7 +86,6 @@ router.post(
             }
             return res.json({ status: "failed", msgs: errList });
         }
-        req.body.description = sanitizeHtml(req.body.description);
         let vulnerability = new Vulnerability({
             vtid: "vt-" + crypto.randomBytes(3).toString("hex"),
             cvss: req.body.cvssScore,
@@ -98,11 +102,53 @@ router.post(
     }
 );
 
-router.get("/id/:vulnID", async () => {
+router.get("/id/:vulnID", async (req, res) => {
     let vuln = await Vulnerability.findOne({
-        vtid: req.params.vulnID
-    })
-
+        vtid: req.params.vulnID,
+    });
+    if (vuln) {
+        if (vuln.author == req.session.user) {
+            //TabID -> Content AriaLabeledBy
+            //TabHREF -> TabAriaControls -> Content ID
+            let author = await User.findOne({
+                _id: req.session.user,
+            });
+            vuln.author = author.username;
+            return res.render("vuln/vuln-view", { vuln });
+        } else {
+            return helpers.sendError(res, 403);
+        }
+    }
+    return helpers.sendError(res, 400);
 });
+
+router.post("/desc", async (req, res) => {
+    console.log(req.body);
+    if (!req.body.vtid) {
+        return res.status(400).json({
+            status: 'failed',
+            error: 'emptyvtid'
+        });
+    }
+    let vuln = await Vulnerability.findOne({
+        vtid: req.body.vtid
+    })
+    if (!vuln) {
+        return res.status(400).json({
+            status: 'failed',
+            error: 'novuln'
+        });
+    }
+    if (vuln.author == req.session.user) {
+        return res.json({
+            status: 'success',
+            description: vuln.description
+        });
+    }
+    return res.status(403).json({
+        status: 'failed',
+        error: 'nopermission'
+    });
+})
 
 module.exports = router;

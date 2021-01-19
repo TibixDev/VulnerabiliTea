@@ -139,4 +139,21 @@ $(() => {
     $('.regDate').each((i, obj) => {
         $(obj).html("<p><strong>Register Date: </strong>" + new Date($(obj).text()).toUTCString() + "</p>");
     });
+    if($('#vulnDescriptionTab').length) {
+        let localVtid = $('#vulnOverviewHeader').text().substring(25, 34);
+        console.log('VTID: ' + localVtid);
+        $.ajax({
+            type: "POST",
+            url: "http://localhost/vuln/desc",
+            data: JSON.stringify({ vtid: localVtid }),
+            processData: false,
+            contentType: 'application/json',
+            success: res => {
+                console.log(res);
+                if (!res.err) {
+                    $('#vulnDescriptionTab').append(DOMPurify.sanitize(res.description));
+                }
+            }
+        });
+    }
 });

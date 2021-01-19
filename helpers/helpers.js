@@ -12,4 +12,25 @@ function isLoggedIn(req, res, next) {
     next();
 }
 
-module.exports = { isLoggedIn };
+function sendError(res, errCode) {
+    let errDescription;
+    switch (errCode) {
+        case 400:
+            errDescription = "The requested path couldn't be found.";
+            break;
+        case 404:
+            errDescription = "The requested resource couldn't be found.";
+            break;
+        case 403:
+            errDescription = "You are not allowed to view this page";
+            break;
+    }
+    return res.status(errCode).render("err", {
+        err: {
+            code: errCode,
+            description: errDescription,
+        },
+    });
+}
+
+module.exports = { isLoggedIn, sendError };

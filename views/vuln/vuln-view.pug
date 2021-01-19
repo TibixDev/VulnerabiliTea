@@ -1,0 +1,38 @@
+extends ../base.pug
+
+block content
+    .container-fluid.justify-content-center.mt-3
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary.color-brown.mb-3
+                h1#vulnOverviewHeader Vulnerability Overview - #{vuln.vtid}
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.color-brown
+                    .row
+                        ul.nav.nav-tabs.mb-3#profileTabs.rounded-top-3(role="tablist")
+                            li.nav-item(role="presentation")
+                                a.nav-link.active(id="vulnDetailsTabControl" href="#vulnDetailsTab" data-mdb-toggle="tab" role="tab" aria-controls="vulnDetailsTab" aria-selected="true") Details
+                            li.nav-item(role="presentation")
+                                a.nav-link(id="vulnDescriptionTabControl" href="#vulnDescriptionTab" data-mdb-toggle="tab" role="tab" aria-controls="vulnDescriptionTab" aria-selected="false") Description
+                    .row.tab-content#vulnTabs-content
+                        .tab-pane.fade.show.active#vulnDetailsTab.col-xl-5.col-l-6.col-md-8.col-sm-10(role="tabpanel" aria-labelledby="vulnDetailsTabControl")
+                            p
+                                strong Author: 
+                                | #{vuln.author}
+                            p
+                                strong Date Reported: 
+                                | #{vuln.dateReported}
+                            p
+                                strong Affected Product: 
+                                | #{vuln.affectedProduct}
+                            p
+                                strong Affected Feature: 
+                                | #{vuln.affectedFeature}
+                            p
+                                strong Vulnerability Type: 
+                                | #{vuln.type}
+                            p
+                                strong CVSS Score: 
+                                | #{vuln.cvss}
+                            p
+                                strong Status: 
+                                | #{vuln.status}
+                        .tab-pane.fade#vulnDescriptionTab.col-xl-5.col-l-6.col-md-8.col-sm-10.w-100.mb-5(role="tabpanel" aria-labelledby="vulnDescriptionTabControl")

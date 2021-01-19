@@ -36,6 +36,10 @@ html, body {
     background-color: transparent!important;
 }
 
+.bg-white {
+    background-color: white!important;
+}
+
 
 
 /* Index CSS */
@@ -235,6 +239,12 @@ html, body {
 
 .dateReported {
     min-width: 17rem;
+}
+
+/* Vuln View CSS */
+#detailsTab {
+    font-size: 1.2rem;
+    font-weight: 400;
 }
 
 /* Profile CSS */

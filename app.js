@@ -6,7 +6,9 @@ const express = require('express'),
     MongoStore = require('connect-mongodb-session')(session),
     Config = require('./config/config.json'),
     flash = require('connect-flash'),
-    cookieParser = require('cookie-parser');
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    helpers = require('./helpers/helpers.js');
 
 /* Middlewares that enable use to:
         - Serve static pages
@@ -14,11 +16,15 @@ const express = require('express'),
         - Receive better formatted POST requests
         - Have Sessions
         - Have Flashes (redirect messages)
-        - Have Routes */
+        - Have Routes
+        - Parse JSON body
+        - Serve Errors */
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 // Configure Mongo & Express Session Store
 
@@ -46,10 +52,9 @@ const routes = require('./routes/routes.js');
 app.use('/', routes.index);
 app.use('/vuln', routes.vuln);
 app.use('/user', routes.user);
-
-app.all('*', (req, res) => {
-    res.status(404).send("Error 404 -> Not Found");
-});
+app.all('/*', (req, res, next) => {
+   return helpers.sendError(res, 400);
+}) 
 
 // Host the app on the port specified so it is accessible with a browser
 
