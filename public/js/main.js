@@ -69,22 +69,30 @@ $(() => {
         });
     }
 
-    $("#vulnAddForm").submit((e) => {
+    $("#vulnForm").submit((e) => {
+        let actionUrl = $("#vulnForm").attr('action');
         e.preventDefault();
-        let fData = new FormData($("#vulnAddForm")[0]);
+        let fData = new FormData($("#vulnForm")[0]);
+        let modeVerb = 'added';
+        if (actionUrl.includes('edit')) {
+            fData.append("vtid", $('#vulnEditHeader').text().substring(21, 30));
+            modeVerb = 'modified';
+        }
         fData.append("description", $(".trumbowyg-editor").html());
+        
         $.ajax({
             type: "POST",
-            url: "/vuln/add",
+            url: actionUrl,
             data: fData,
             processData: false,
             contentType: false,
             success: res => {
                 if (res.status == "success") {
+                    $("#infoDiv").empty();
                     $("#infoDiv").append(`
                     <div class='text-dark my-2 mx-1 note note-success'>
                         <strong>Success</strong>
-                        Vulnerability added successfully. Redirecting in 3 seconds...
+                        Vulnerability ${modeVerb} successfully. Redirecting in 3 seconds...
                     </div>`);
                     setTimeout(() => {
                         window.location.href = "/vuln";
@@ -154,6 +162,24 @@ $(() => {
                 console.log(res);
                 if (!res.err) {
                     $('#vulnDescriptionTab').append(DOMPurify.sanitize(res.description));
+                }
+            }
+        });
+    }
+
+    if($('#vulnDescEdit').length) {
+        let localVtid = $('#vulnEditHeader').text().substring(21, 30);
+        console.log('VTID: ' + localVtid);
+        $.ajax({
+            type: "POST",
+            url: "/vuln/desc",
+            data: JSON.stringify({ vtid: localVtid }),
+            processData: false,
+            contentType: 'application/json',
+            success: res => {
+                console.log(res);
+                if (!res.err) {
+                    $('#vulnDescEdit').append(DOMPurify.sanitize(res.description));
                 }
             }
         });

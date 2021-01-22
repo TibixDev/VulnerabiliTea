@@ -6,19 +6,19 @@ block content
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary
                 .row.justify-content-center
                     .col-12
-                        h1 Add Vulnerability
+                        h1#vulnEditHeader Edit Vulnerability - #{vuln.vtid}
         .row.justify-content-center
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.mt-3
                 .row#infoDiv
-                form#vulnForm(action='/vuln/add/' method='post')
+                form#vulnForm(action='/vuln/edit/' method='post')
                     .row
                         .col-6.mb-3
                             .mb-3
                                 label.form-label(for='affectedProduct') Affected Product
-                                input.form-control(name='affectedProduct' type='text' id='affectedProduct' placeholder='Product Name' required)
+                                input.form-control(name='affectedProduct' type='text' id='affectedProduct' value=vuln.affectedProduct placeholder='Product Name' required)
                         .col-6.mb-3
                                 label.form-label(for='affectedFeature') Affected Feature
-                                input.form-control(name='affectedFeature' type='text' id='affectedFeature' placeholder='File Sharing' required)
+                                input.form-control(name='affectedFeature' type='text' id='affectedFeature' value=vuln.affectedFeature placeholder='File Sharing' required)
                     .row
                         .col-4.mb-3
                             label.form-label(for='vulnType') Vulnerability Type
@@ -32,7 +32,7 @@ block content
                                 option(value='Other') Other
                         .col-4.mb-3
                                 label.form-label(for='cvssScore') CVSS Score
-                                input.form-control#cvssScore(name='cvssScore' type='number' min='1.0' max='10.0' step='0.01' placeholder='1.0 - 10.0' required)
+                                input.form-control#cvssScore(name='cvssScore' value=vuln.cvss type='number' min='1.0' max='10.0' step='0.01' placeholder='1.0 - 10.0' required)
                         .col-4.mb-3
                             label.form-label(for='status') Status
                             select#status.form-control.form-select.select-input(name='status' aria-label='Status' required)
@@ -42,7 +42,7 @@ block content
                     .row
                         .col-12.mb-3
                             label.form-label(for='description') Description
-                            .trumbowyg.vulnRTEditor.form-control(name='trumbowyg')
+                            .trumbowyg.vulnRTEditor.form-control#vulnDescEdit(name='trumbowyg')
                     .row
                         .col-6.mb-4
                             .form-group
@@ -52,11 +52,8 @@ block content
                             .form-group
                                 label.form-label(for='bountyAmount') Bounty Amount
                                 .input-group
-                                    input.form-control(name='bountyAmount' type='number' id='bountyAmount' placeholder='100' aria-describedby='bountyAddon' aria-label='Bounty' required)
+                                    input.form-control(name='bountyAmount' type='number' id='bountyAmount' value=vuln.bounty placeholder='100' aria-describedby='bountyAddon' aria-label='Bounty' required)
                                     span.input-group-text#bountyAddon USD
                     .row.justify-content-center.text-center
                         .col-8
-                            button.btn.btn-primary.vulnSubmitBtn Process
-
-                    
-
+                            button.btn.btn-primary.vulnSubmitBtn Confirm Edit

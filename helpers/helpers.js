@@ -16,10 +16,10 @@ function sendError(res, errCode) {
     let errDescription;
     switch (errCode) {
         case 400:
-            errDescription = "The requested path couldn't be found.";
+            errDescription = "The requested path could not be found.";
             break;
         case 404:
-            errDescription = "The requested resource couldn't be found.";
+            errDescription = "The requested resource could not be found.";
             break;
         case 403:
             errDescription = "You are not allowed to view this page";

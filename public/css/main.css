@@ -237,7 +237,11 @@ html, body {
     font-size: 1.3rem;
 }
 
-.dateReported {
+.vtidCol {
+    min-width: 9rem;
+}
+
+.dateReportedCol {
     min-width: 17rem;
 }
 

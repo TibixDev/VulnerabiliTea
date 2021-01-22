@@ -14,7 +14,7 @@ const Vulnerability = require("../db/models/vulnerability.js");
 // Handle: Vulnerability Management
 router.get("/", helpers.isLoggedIn, async (req, res) => {
     let vulns = await Vulnerability.find({ author: req.session.user });
-    res.render("vuln/vuln", { vulns });
+    res.render("vuln/vuln", { vulns, ownEntries: 'true' });
 });
 
 router.get("/add", helpers.isLoggedIn, (req, res) => {
@@ -25,7 +25,7 @@ router.get("/add", helpers.isLoggedIn, (req, res) => {
     instead of rendering, because trumbowyg can only
     provide multipart-form-data (kms) */
 router.post(
-    "/add",
+    ["/add", "/edit"],
     helpers.isLoggedIn,
     upload.none(),
     [
@@ -86,19 +86,56 @@ router.post(
             }
             return res.json({ status: "failed", msgs: errList });
         }
-        let vulnerability = new Vulnerability({
-            vtid: "vt-" + crypto.randomBytes(3).toString("hex"),
-            cvss: req.body.cvssScore,
-            type: req.body.vulnType,
-            affectedProduct: req.body.affectedProduct,
-            affectedFeature: req.body.affectedFeature,
-            status: req.body.status,
-            author: req.session.user,
-            description: req.body.description,
-            bounty: req.body.bountyAmount || 0,
-        });
-        await vulnerability.save();
-        res.json({ status: "success" });
+        // TODO: Strip slashes from the url, it's easier to compare it that way
+        switch (req.url) {
+            case '/add/':
+                let vulnerability = new Vulnerability({
+                    vtid: "vt-" + crypto.randomBytes(3).toString("hex"),
+                    cvss: req.body.cvssScore,
+                    type: req.body.vulnType,
+                    affectedProduct: req.body.affectedProduct,
+                    affectedFeature: req.body.affectedFeature,
+                    status: req.body.status,
+                    author: req.session.user,
+                    description: req.body.description,
+                    bounty: req.body.bountyAmount || 0,
+                });
+                await vulnerability.save();
+                res.json({ status: "success" });
+                break;
+            case '/edit/':
+                if (!req.body.vtid) {
+                    return res.status(400).json({
+                        status: 'failed',
+                        error: 'emptyvtid'
+                    });
+                }
+                let editableVulnerability = await Vulnerability.findOne({
+                    vtid: req.body.vtid
+                });
+                if (!editableVulnerability) {
+                    return res.status(400).json({
+                        status: 'failed',
+                        error: 'novuln'
+                    });
+                }
+                if (editableVulnerability.author == req.session.user) {
+                    editableVulnerability.cvss = req.body.cvssScore;
+                    editableVulnerability.type = req.body.vulnType;
+                    editableVulnerability.affectedProduct = req.body.affectedProduct;
+                    editableVulnerability.affectedFeature = req.body.affectedFeature;
+                    editableVulnerability.status = req.body.status;
+                    editableVulnerability.author = req.session.user;
+                    editableVulnerability.description = req.body.description;
+                    editableVulnerability.bounty = req.body.bountyAmount || 0;
+                    await editableVulnerability.save();
+                    return res.json({ status: "success" });
+                }
+                return res.status(403).json({
+                    status: 'failed',
+                    error: 'nopermission'
+                });
+        }
     }
 );
 
@@ -115,6 +152,26 @@ router.get("/id/:vulnID", async (req, res) => {
             });
             vuln.author = author.username;
             return res.render("vuln/vuln-view", { vuln });
+        } else {
+            return helpers.sendError(res, 403);
+        }
+    }
+    return helpers.sendError(res, 400);
+});
+
+router.get("/edit/:vulnID", async (req, res) => {
+    let vuln = await Vulnerability.findOne({
+        vtid: req.params.vulnID,
+    });
+    if (vuln) {
+        if (vuln.author == req.session.user) {
+            //TabID -> Content AriaLabeledBy
+            //TabHREF -> TabAriaControls -> Content ID
+            let author = await User.findOne({
+                _id: req.session.user,
+            });
+            vuln.author = author.username;
+            return res.render("vuln/vuln-edit", { vuln });
         } else {
             return helpers.sendError(res, 403);
         }
