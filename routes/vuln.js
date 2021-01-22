@@ -122,6 +122,8 @@ router.get("/id/:vulnID", async (req, res) => {
     return helpers.sendError(res, 400);
 });
 
+/*  We need this because we use AJAX to get the vulnerability description
+    We could use inline scripts in the Pug template but it's hacky and ugly */
 router.post("/desc", async (req, res) => {
     console.log(req.body);
     if (!req.body.vtid) {

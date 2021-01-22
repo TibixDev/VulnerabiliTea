@@ -136,15 +136,17 @@ $(() => {
     $('.dateReported').each((i, obj) => {
         $(obj).text(new Date($(obj).text()).toUTCString());
     });
+
     $('.regDate').each((i, obj) => {
         $(obj).html("<p><strong>Register Date: </strong>" + new Date($(obj).text()).toUTCString() + "</p>");
     });
+    
     if($('#vulnDescriptionTab').length) {
         let localVtid = $('#vulnOverviewHeader').text().substring(25, 34);
         console.log('VTID: ' + localVtid);
         $.ajax({
             type: "POST",
-            url: "http://localhost/vuln/desc",
+            url: "/vuln/desc",
             data: JSON.stringify({ vtid: localVtid }),
             processData: false,
             contentType: 'application/json',
