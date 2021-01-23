@@ -127,10 +127,6 @@ html, body {
     margin-right: 0.5rem!important;
 }
 
-#headerSignIn {
-    color: white;
-}
-
 #footer {
     transition: margin-left 0.7s;
     /*position: absolute;

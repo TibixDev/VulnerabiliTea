@@ -23,15 +23,22 @@ html
                     h1.baseTitleHeader VulnerabiliTea
                 .col-6.headerCol.headerUserSpace.text-center.d-flex.align-items-center.justify-content-end
                     .d-inline
-                        a#headerSignIn.d-flex.align-items-center.justify-content-end(href='/login')
-                            i(style='vertical-align: middle;' class='fas fa-user-circle fa-2x').me-2.ms-2.float-start
-                            | Sign In
+                        if username
+                            a#headerSignedIn.d-flex.align-items-center.justify-content-end.color-white(href='/user/profile')
+                                i(style='vertical-align: middle;' class='fas fa-user-circle fa-2x').me-2.ms-2.float-start
+                                | #{username}
+                        else
+                            a#headerSignIn.d-flex.align-items-center.justify-content-end.color-white(href='/login')
+                                i(style='vertical-align: middle;' class='fas fa-sign-in-alt fa-2x').me-2.ms-2.float-start
+                                | Sign In
         #sidebar.sidebar
             +sidebarOption('fas fa-shield-alt', 'Activity', '#')
-            +sidebarOption('fas fa-tools', 'Manage', '/vuln')
+            if username
+                +sidebarOption('fas fa-tools', 'Manage', '/vuln')
             +sidebarOption('fas fa-users', 'Groups', '#')
             +sidebarOption('fas fa-info-circle', 'About', '#')
-            +sidebarOption('fas fa-sign-out-alt', 'Logout', '/logout')
+            if username
+                +sidebarOption('fas fa-sign-out-alt', 'Logout', '/logout')
         .mb-5
         .content
             block content

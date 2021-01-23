@@ -8,7 +8,8 @@ const express = require('express'),
     flash = require('connect-flash'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    helpers = require('./helpers/helpers.js');
+    helpers = require('./helpers/helpers.js'),
+    User = require('./db/models/user.js');
 
 /* Middlewares that enable use to:
         - Serve static pages
@@ -39,6 +40,16 @@ app.use(session({
     saveUninitialized: true,
     secret: Config.session.secret
 }));
+
+// Pass username to Pug templates when possible
+
+app.use(async (req, res, next) => {
+    if (req.session.user) {
+        let user = await User.findOne({_id: req.session.user});
+        res.locals.username = user.username;
+    }
+    next();
+})
 
 // Configure Flashes and Cookies
 
