@@ -1,5 +1,8 @@
 extends ../base.pug
 
+block headblock
+    - var title = 'View Vulnerability'
+
 block content
     .container-fluid.justify-content-center.mt-3
         .row.justify-content-center
@@ -16,7 +19,7 @@ block content
                         .tab-pane.fade.show.active#vulnDetailsTab.col-xl-5.col-l-6.col-md-8.col-sm-10(role="tabpanel" aria-labelledby="vulnDetailsTabControl")
                             p
                                 strong Author: 
-                                | #{vuln.author}
+                                span #{vuln.author}
                             p
                                 strong Date Reported: 
                                 | #{vuln.dateReported}
@@ -31,8 +34,10 @@ block content
                                 | #{vuln.type}
                             p
                                 strong CVSS Score: 
-                                | #{vuln.cvss}
+                                span.cvssScore
+                                    strong #{vuln.cvss}
                             p
                                 strong Status: 
-                                | #{vuln.status}
+                                span.status
+                                    strong #{vuln.status}
                         .tab-pane.fade#vulnDescriptionTab.col-xl-5.col-l-6.col-md-8.col-sm-10.w-100.mb-5(role="tabpanel" aria-labelledby="vulnDescriptionTabControl")

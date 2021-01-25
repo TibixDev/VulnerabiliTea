@@ -9,7 +9,8 @@ mixin sidebarOption(faico, title, link)
 
 html
     head
-        title VulnerabiliTea - #{title}
+        block headblock
+        title= 'VulnerabiliTea - ' + title
         include includes\head_includes.pug
     body
         include includes\body_includes.pug

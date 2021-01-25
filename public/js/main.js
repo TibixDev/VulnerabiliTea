@@ -154,32 +154,36 @@ $(() => {
         console.log('VTID: ' + localVtid);
         $.ajax({
             type: "POST",
-            url: "/vuln/desc",
+            url: "/vuln/data",
             data: JSON.stringify({ vtid: localVtid }),
             processData: false,
             contentType: 'application/json',
             success: res => {
                 console.log(res);
                 if (!res.err) {
-                    $('#vulnDescriptionTab').append(DOMPurify.sanitize(res.description));
+                    $('#vulnDescriptionTab').append(DOMPurify.sanitize(res.vuln.description));
                 }
             }
         });
     }
 
+    /* This applies values the droptowns too, but I don't want to 
+       make 2 separate ifs becuase it's long and ugly */
     if($('#vulnDescEdit').length) {
         let localVtid = $('#vulnEditHeader').text().substring(21, 30);
         console.log('VTID: ' + localVtid);
         $.ajax({
             type: "POST",
-            url: "/vuln/desc",
+            url: "/vuln/data",
             data: JSON.stringify({ vtid: localVtid }),
             processData: false,
             contentType: 'application/json',
             success: res => {
                 console.log(res);
                 if (!res.err) {
-                    $('#vulnDescEdit').append(DOMPurify.sanitize(res.description));
+                    $('#vulnDescEdit').append(DOMPurify.sanitize(res.vuln.description));
+                    $(`select option[value='${res.vuln.type}']`).attr("selected","selected");
+                    $(`select option[value='${res.vuln.status}']`).attr("selected","selected");
                 }
             }
         });
