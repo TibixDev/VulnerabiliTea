@@ -53,15 +53,8 @@ router.post("/login", async (req, res) => {
             });
         }
         if (result == true) {
-            return res.render("login", {
-                msgs: [
-                    {
-                        noteType: "note-success",
-                        pretext: "Success",
-                        value: `Successfully logged in as ${user.username}`,
-                    },
-                ],
-            });
+            req.session.user = user._id;
+            return res.redirect("/vuln");
         }
         return res.render("login", {
             msgs: [
@@ -73,7 +66,6 @@ router.post("/login", async (req, res) => {
             ],
         });
     });
-    req.session.user = user._id;
 });
 
 router.get("/register", (req, res) => {
@@ -197,6 +189,8 @@ router.post(
 
 router.get("/logout", (req, res) => {
     if (req.session.user) {
+        // a bit hacky but is ok
+        req.session.user = '';
         req.flash("msgs", [
             {
                 noteType: "note-info",

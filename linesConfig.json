@@ -1,1 +1,1 @@
-{"extList":[".js",".css",".pug"],"ignoreList":["node_modules","mdb","package","package-lock","trumbowyg"]}
+{"extList":[".js",".css",".pug"],"ignoreList":["node_modules","mdb","package","package-lock","trumbowyg",".min","bootstrap", "jquery"]}

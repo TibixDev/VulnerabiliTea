@@ -168,7 +168,7 @@ $(() => {
     }
 
     /* This applies values the droptowns too, but I don't want to 
-       make 2 separate ifs becuase it's long and ugly */
+       make 2 separate ifs because it's long and ugly */
     if($('#vulnDescEdit').length) {
         let localVtid = $('#vulnEditHeader').text().substring(21, 30);
         console.log('VTID: ' + localVtid);
