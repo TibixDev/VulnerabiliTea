@@ -241,6 +241,10 @@ html, body {
     min-width: 17rem;
 }
 
+.trumbowyg {
+    z-index: -1!important;
+}
+
 /* Vuln View CSS */
 #detailsTab {
     font-size: 1.2rem;
