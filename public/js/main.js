@@ -188,4 +188,28 @@ $(() => {
             }
         });
     }
+
+    if($('.vulnDeleteBtn').length) {
+        $('.vulnDeleteBtn').each((i, obj) => {
+            $(obj).click(() => {
+                $.ajax({
+                    type: "DELETE",
+                    url: "/vuln/delete",
+                    data: JSON.stringify({ vtid: $(obj).attr('name') }),
+                    processData: false,
+                    contentType: 'application/json',
+                    success: res => {
+                        if (!res.err) {
+                            $(obj).closest('tr').fadeTo('fast', 0, () => {
+                                $(obj).closest('tr').remove();
+                            });
+                        }
+                    },
+                    error: err => {
+                        console.log(err);
+                    }
+                });
+            })
+        })
+    }
 });

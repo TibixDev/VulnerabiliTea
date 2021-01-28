@@ -20,12 +20,18 @@ router.get("/base", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
+    if (req.session.user) {
+        return res.redirect("vuln");
+    }
     res.render("login", {
         msgs: req.flash("msgs"),
     });
 });
 
 router.post("/login", async (req, res) => {
+    if (req.session.user) {
+        return res.redirect("vuln");
+    }
     let user = await User.findOne({
         email: req.body.email,
     });
@@ -69,11 +75,19 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/register", (req, res) => {
+    if (req.session.user) {
+        return res.redirect("vuln");
+    }
     res.render("register");
 });
 
 router.post(
-    "/register",
+    "/register", (req, res, next) => {
+        if (req.session.user) {
+            return res.redirect('/vuln');
+        }
+        next();
+    },
     [
         body("email")
             .exists()
@@ -143,6 +157,9 @@ router.post(
             ),
     ],
     async (req, res) => {
+        if (req.session.user) {
+            res.redirect('/vuln');
+        }
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {
             let errList = [];
@@ -190,7 +207,7 @@ router.post(
 router.get("/logout", (req, res) => {
     if (req.session.user) {
         // a bit hacky but is ok
-        req.session.user = '';
+        req.session.user = "";
         req.flash("msgs", [
             {
                 noteType: "note-info",

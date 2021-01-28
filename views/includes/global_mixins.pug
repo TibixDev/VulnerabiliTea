@@ -5,13 +5,52 @@ mixin noteMsg(msgs)
                 strong #{msg.pretext}: 
                 | #{msg.value}
 
+mixin vulnTable(vulns)
+    .table-responsive
+        table.table.table-striped.table-bordered.vulnTable
+            thead.bg-lbrown.color-white.rounded-top
+                tr
+                    th(scope="col") VTID
+                    th(scope="col") CVSS
+                    th(scope="col") Type
+                    th(scope="col") Product
+                    th(scope="col") Feature
+                    th(scope="col") Status
+                    th(scope="col") Bounty
+                    th(scope="col") Date Reported
+                    if ownEntries
+                        th(scope="col") Action
+            tbody
+                each vuln in vulns || []
+                    tr
+                        td.vtidCol
+                            a(href='/vuln/id/' + vuln.vtid) #{vuln.vtid}
+                        td.font-weight-bold.cvssScore #{vuln.cvss}
+                        td #{vuln.type}
+                        td #{vuln.affectedProduct}
+                        td #{vuln.affectedFeature}
+                        td.font-weight-bold.status #{vuln.status}
+                        td #{vuln.bounty}
+                        td.dateReportedCol #{vuln.dateReported}
+                        if ownEntries
+                            td(style='padding: 0; padding-top: 1rem;')
+                                .d-flex.justify-content-center
+                                    .mx-1(style='font-size: 1.3em')
+                                        a(href='/vuln/edit/' + vuln.vtid alt='Edit')
+                                            i.fa.fa-edit.float-end
+                                        a(href='#' alt='Delete')
+                                            i.vulnDeleteBtn.mx-2.fa.fa-trash(name=vuln.vtid)
+
 mixin vulnTableEntry(vtid, cvss, type, affProd, affSubProd, status, bounty, dateReported)
     tr
         td.vtidCol
             a(href='/vuln/id/' + vtid) #{vtid}
-            if ownEntries
+        if ownEntries
+            td
                 a.ms-2(href='/vuln/edit/' + vtid)
-                    i.fa.fa-edit
+                    i.fa.fa-edit.float-end.ms-1
+                a.ms-2(name=vtid href='/vuln/delete/' + vtid)
+                    i.fa.fa-trash.float-end.mx-1
         td.font-weight-bold.cvssScore #{cvss}
         td #{type}
         td #{affProd}

@@ -9,26 +9,11 @@ block content
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary
                 .row.justify-content-center
                     .col-6
-                        h1 My Vulnerabilities (#{vulns.length || 0})
+                        h1 My Discoveries (#{vulns.length || 0})
                     .col-6.d-flex.align-items-center.justify-content-end
                         a(href='/vuln/add')
-                            button.btn.btn-primary.rounded-pill(type='submit' role='button') Add +
+                            button.btn.btn-primary.rounded-pill(type='submit' role='button') + Add
         .row.justify-content-center
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.mt-3
-                .table-responsive
-                    table.table.table-striped.table-bordered.vulnTable
-                        thead.bg-lbrown.color-white.rounded-top
-                            tr
-                                th(scope="col") VTID
-                                th(scope="col") CVSS
-                                th(scope="col") Type
-                                th(scope="col") Affected Product
-                                th(scope="col") Affected Feature
-                                th(scope="col") Status
-                                th(scope="col") Bounty
-                                th(scope="col") Date Reported
-                        tbody
-                            if vulns
-                                each vuln in vulns
-                                    +vulnTableEntry(vuln.vtid, vuln.cvss, vuln.type, vuln.affectedProduct, vuln.affectedFeature, vuln.status, vuln.bounty + '$', vuln.dateReported)
+                    +vulnTable(vulns)
 

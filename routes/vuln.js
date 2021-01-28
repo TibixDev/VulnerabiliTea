@@ -9,6 +9,7 @@ const express = require("express"),
 
 // Model Imports
 const User = require("../db/models/user.js");
+const vulnerability = require("../db/models/vulnerability.js");
 const Vulnerability = require("../db/models/vulnerability.js");
 
 // Handle: Vulnerability Management
@@ -19,6 +20,46 @@ router.get("/", helpers.isLoggedIn, async (req, res) => {
 
 router.get("/add", helpers.isLoggedIn, (req, res) => {
     res.render("vuln/vuln-add");
+});
+
+router.get("/id/:vulnID", async (req, res) => {
+    let vuln = await Vulnerability.findOne({
+        vtid: req.params.vulnID,
+    });
+    if (vuln) {
+        if (vuln.author == req.session.user) {
+            //TabID -> Content AriaLabeledBy
+            //TabHREF -> TabAriaControls -> Content ID
+            let author = await User.findOne({
+                _id: req.session.user,
+            });
+            vuln.author = author.username;
+            return res.render("vuln/vuln-view", { vuln });
+        } else {
+            return helpers.sendError(res, 403);
+        }
+    }
+    return helpers.sendError(res, 400);
+});
+
+router.get("/edit/:vulnID", async (req, res) => {
+    let vuln = await Vulnerability.findOne({
+        vtid: req.params.vulnID,
+    });
+    if (vuln) {
+        if (vuln.author == req.session.user) {
+            //TabID -> Content AriaLabeledBy
+            //TabHREF -> TabAriaControls -> Content ID
+            let author = await User.findOne({
+                _id: req.session.user,
+            });
+            vuln.author = author.username;
+            return res.render("vuln/vuln-edit", { vuln });
+        } else {
+            return helpers.sendError(res, 403);
+        }
+    }
+    return helpers.sendError(res, 400);
 });
 
 /* We respond with JSON for the client to parse
@@ -139,45 +180,33 @@ router.post(
     }
 );
 
-router.get("/id/:vulnID", async (req, res) => {
-    let vuln = await Vulnerability.findOne({
-        vtid: req.params.vulnID,
-    });
-    if (vuln) {
-        if (vuln.author == req.session.user) {
-            //TabID -> Content AriaLabeledBy
-            //TabHREF -> TabAriaControls -> Content ID
-            let author = await User.findOne({
-                _id: req.session.user,
-            });
-            vuln.author = author.username;
-            return res.render("vuln/vuln-view", { vuln });
-        } else {
-            return helpers.sendError(res, 403);
-        }
+router.delete('/delete', helpers.isLoggedIn, async (req, res) => {
+    if (!req.body.vtid) {
+        return res.status(400).json({
+            status: 'failed',
+            error: 'novtid'
+        });
     }
-    return helpers.sendError(res, 400);
-});
-
-router.get("/edit/:vulnID", async (req, res) => {
     let vuln = await Vulnerability.findOne({
-        vtid: req.params.vulnID,
+        vtid: req.body.vtid
     });
-    if (vuln) {
-        if (vuln.author == req.session.user) {
-            //TabID -> Content AriaLabeledBy
-            //TabHREF -> TabAriaControls -> Content ID
-            let author = await User.findOne({
-                _id: req.session.user,
-            });
-            vuln.author = author.username;
-            return res.render("vuln/vuln-edit", { vuln });
-        } else {
-            return helpers.sendError(res, 403);
-        }
+    if (!vuln) {
+        return res.status(400).json({
+            status: 'failed',
+            error: 'notfound'
+        });
     }
-    return helpers.sendError(res, 400);
-});
+    if (vuln.author != req.session.user) {
+        return res.status(403).json({
+            status: 'failed',
+            error: 'forbidden'
+        });
+    }
+    await vuln.delete();
+    return res.json({
+        status: 'success',
+    })
+})
 
 /*  We need this because we use AJAX to get the vulnerability description
     We could use inline scripts in the Pug template but it's hacky and ugly */

@@ -107,6 +107,10 @@ html, body {
     background-color: #814A26;
 }
 
+header {
+    z-index: 1;
+}
+
 .headerCol {
     height: 3.5rem;
 }
@@ -141,6 +145,7 @@ html, body {
 }
 
 .sidebar {
+    z-index: 1;
     width: 0rem;
     height: 100%;
     position: fixed;
@@ -241,10 +246,9 @@ html, body {
     min-width: 17rem;
 }
 
-.trumbowyg {
-    z-index: -1!important;
+.trumbowyg-button-pane {
+    z-index: 0;
 }
-
 /* Vuln View CSS */
 #detailsTab {
     font-size: 1.2rem;
