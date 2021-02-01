@@ -1,0 +1,52 @@
+extends base.pug
+
+block headblock
+    - var title = 'About'
+
+block content
+    .container-fluid.justify-content-center.mt-3.vulnCont
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary
+                h1 About
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.color-brown
+                .d-flex.justify-content-center
+                    ul#aboutHeaderLi.mt-3
+                        li
+                            i.aboutFaHelper.fas.fa-mug-hot.fa-6x
+                            h1.aboutFaHelper#aboutHeader VulnerabiliTea
+                .mt-4.h4
+                    p <strong>VulnerabiliTea</strong> is a free and open-source security vulnerability management web application made for penetration testers.
+                        |  It can both be used on this website, or as an instance running on a private self-hosted server.
+                    br
+                    p <strong>Build:</strong> Early Alpha (2021/02/01)
+                    p <strong>Author:</strong> <a href='https://github.com/TibixDev/'>Tibix</a>
+                    p <strong>Repository:</strong> <a href='https://github.com/TibixDev/'><i class='fab fa-github'></i></a>
+                    p <strong>Tech stack used:</strong> 
+                        | <a href='https://www.mongodb.com/try/download/community'>MongoDB</a>, 
+                        | <a href='https://expressjs.com/'>Express</a>, 
+                        | <a href='https://nodejs.org/en/'>Node.js</a>
+                    p <strong>Open-source software used:</strong><br>
+                    .row
+                        .col-xl-3.col-sm-12
+                            strong Frontend
+                            ul
+                                li <a href='https://mdbootstrap.com/'>MDBootstrap</a>
+                                li <a href='https://jquery.com/'>JQuery</a>
+                                li <a href='https://alex-d.github.io/Trumbowyg/'>Trumbowyg</a>
+                                li <a href='https://github.com/cure53/DOMPurify'>DOMPurify</a>
+                        .col-xl-3.col-sm-12
+                            strong Backend
+                            ul
+                                li <a href='https://www.npmjs.com/package/bcrypt'>bcrypt</a>
+                                li <a href='https://www.npmjs.com/package/body-parser'>body-parser</a>
+                                li <a href='https://www.npmjs.com/package/connect-flash'>connect-flash</a>
+                                li <a href='https://www.npmjs.com/package/connect-mongodb-session'>connect-mongodb-session</a>
+                                li <a href='https://www.npmjs.com/package/cookie-parser'>cookie-parser</a>
+                                li <a href='https://www.npmjs.com/package/express'>express</a>
+                                li <a href='https://www.npmjs.com/package/express-session'>express-session</a>
+                                li <a href='https://www.npmjs.com/package/express-validator'>express-validator</a>
+                                li <a href='https://www.npmjs.com/package/mongoose'>mongoose</a>
+                                li <a href='https://www.npmjs.com/package/multer'>multer</a>
+                                li <a href='https://www.npmjs.com/package/nodemon'>nodemon</a>
+                                li <a href='https://www.npmjs.com/package/pug'>pug</a>

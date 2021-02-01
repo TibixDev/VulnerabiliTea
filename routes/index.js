@@ -10,11 +10,16 @@ const saltRounds = 10;
 // Model Imports
 const User = require("../db/models/user.js");
 
-// Handle: Static Home, Register, Login, Logout
+// Handle: Static Home, Register, Login, Logout, About
 router.get("/", (req, res) => {
     res.render("index");
 });
 
+router.get("/about", (req, res) => {
+    res.render("about");
+});
+
+// Debug Purposes (Remove on release)
 router.get("/base", (req, res) => {
     res.render("base");
 });

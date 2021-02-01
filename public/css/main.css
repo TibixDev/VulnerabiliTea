@@ -268,6 +268,25 @@ header {
     font-size: large!important;
 }
 
+/* About CSS */
+#aboutHeaderLi {
+    list-style: none;
+    padding-left: 0;
+}
+
+#aboutHeader {
+    font-size: 4rem;
+    font-weight: 300;
+    padding: 0;
+    margin: 0;
+    margin-left: 1rem;
+}
+
+.aboutFaHelper {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 
 /* !!!!!!!!!!!!!!!!!!!! */
 /* Mobile Media-Queries */
@@ -308,5 +327,12 @@ header {
         width: 70%;
         height: 5rem;
         font-size: 1.3rem;
+    }
+
+    /* About CSS */
+    #aboutHeader {
+        font-size: 2.5rem;
+        font-weight: 400;
+        margin: 1rem 0 0 0;
     }
 }
