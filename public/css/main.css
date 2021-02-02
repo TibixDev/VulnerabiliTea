@@ -29,7 +29,11 @@ html, body {
 }
 
 .bg-lbrown {
-    background-color: #62391d!important;
+    background-color: #774a2c!important;
+}
+
+.bg-silver {
+    background-color: #EEEEEE!important;
 }
 
 .bg-transparent {

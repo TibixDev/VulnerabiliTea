@@ -9,7 +9,7 @@ block content
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary
                 .row.justify-content-center
                     .col-12
-                        h1#vulnEditHeader Edit Discovery - #{vuln.vtid}
+                        h1#vulnEditHeader(vtid=vuln.vtid) Edit Discovery - #{vuln.vtid}
         .row.justify-content-center
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.mt-3
                 .row#infoDiv
@@ -47,6 +47,10 @@ block content
                             label.form-label(for='description') Description
                             .trumbowyg.vulnRTEditor.form-control#vulnDescEdit(name='trumbowyg')
                     .row
+                        .col-12.mt-1
+                            input#publicBox.form-check-input(name='isPublic' type='checkbox')
+                            label.ms-2.form-check-label.color-brown.h4(for='publicBox') Public
+                    .row
                         .col-6.mb-4
                             .form-group
                                 label.form-label(for='pocFileSelector') Proof Of Concept
@@ -56,7 +60,7 @@ block content
                                 label.form-label(for='bountyAmount') Bounty Amount
                                 .input-group
                                     input.form-control(name='bountyAmount' type='number' id='bountyAmount' value=vuln.bounty placeholder='100' aria-describedby='bountyAddon' aria-label='Bounty' required)
-                                    span.input-group-text#bountyAddon USD
+                                    span.bg-silver.input-group-text#bountyAddon USD
                     .row.justify-content-center.text-center
                         .col-8
                             button.btn.btn-primary.vulnSubmitBtn Confirm Edit

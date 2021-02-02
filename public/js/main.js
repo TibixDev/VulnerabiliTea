@@ -75,7 +75,7 @@ $(() => {
         let fData = new FormData($("#vulnForm")[0]);
         let modeVerb = 'added';
         if (actionUrl.includes('edit')) {
-            fData.append("vtid", $('#vulnEditHeader').text().substring(21, 30));
+            fData.append("vtid", $('#vulnEditHeader').attr('vtid'));
             modeVerb = 'modified';
         }
         fData.append("description", $(".trumbowyg-editor").html());
@@ -150,7 +150,7 @@ $(() => {
     });
     
     if($('#vulnDescriptionTab').length) {
-        let localVtid = $('#vulnOverviewHeader').text().substring(25, 34);
+        let localVtid = $('#vulnOverviewHeader').attr('vtid');
         console.log('VTID: ' + localVtid);
         $.ajax({
             type: "POST",
@@ -170,7 +170,7 @@ $(() => {
     /* This applies values the droptowns too, but I don't want to 
        make 2 separate ifs because it's long and ugly */
     if($('#vulnDescEdit').length) {
-        let localVtid = $('#vulnEditHeader').text().substring(21, 30);
+        let localVtid = $('#vulnEditHeader').attr('vtid');
         console.log('VTID: ' + localVtid);
         $.ajax({
             type: "POST",
@@ -184,6 +184,7 @@ $(() => {
                     $('#vulnDescEdit').append(DOMPurify.sanitize(res.vuln.description));
                     $(`select option[value='${res.vuln.type}']`).attr("selected","selected");
                     $(`select option[value='${res.vuln.status}']`).attr("selected","selected");
+                    $('#publicBox').prop('checked', res.vuln.public);
                 }
             }
         });
@@ -195,7 +196,7 @@ $(() => {
                 $.ajax({
                     type: "DELETE",
                     url: "/vuln/delete",
-                    data: JSON.stringify({ vtid: $(obj).attr('name') }),
+                    data: JSON.stringify({ vtid: $(obj).attr('vtid') }),
                     processData: false,
                     contentType: 'application/json',
                     success: res => {

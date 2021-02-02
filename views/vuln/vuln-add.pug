@@ -47,6 +47,10 @@ block content
                             label.form-label(for='description') Description
                             .trumbowyg.vulnRTEditor.form-control(name='trumbowyg')
                     .row
+                        .col-12.mt-1
+                            input#publicBox.form-check-input(name='isPublic' type='checkbox')
+                            label.ms-2.form-check-label.color-brown.h4(for='publicBox') Public
+                    .row
                         .col-6.mb-4
                             .form-group
                                 label.form-label(for='pocFileSelector') Proof Of Concept
@@ -56,7 +60,7 @@ block content
                                 label.form-label(for='bountyAmount') Bounty Amount
                                 .input-group
                                     input.form-control(name='bountyAmount' type='number' id='bountyAmount' placeholder='100' aria-describedby='bountyAddon' aria-label='Bounty' required)
-                                    span.input-group-text#bountyAddon USD
+                                    span.bg-silver.input-group-text#bountyAddon USD
                     .row.justify-content-center.text-center
                         .col-8
                             button.btn.btn-primary.vulnSubmitBtn Process

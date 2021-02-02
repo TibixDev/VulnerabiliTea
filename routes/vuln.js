@@ -27,11 +27,11 @@ router.get("/id/:vulnID", async (req, res) => {
         vtid: req.params.vulnID,
     });
     if (vuln) {
-        if (vuln.author == req.session.user) {
+        if (vuln.author == req.session.user || vuln.public) {
             //TabID -> Content AriaLabeledBy
             //TabHREF -> TabAriaControls -> Content ID
             let author = await User.findOne({
-                _id: req.session.user,
+                _id: vuln.author,
             });
             vuln.author = author.username;
             return res.render("vuln/vuln-view", { vuln });
@@ -127,6 +127,10 @@ router.post(
             }
             return res.json({ status: "failed", msgs: errList });
         }
+
+        let public = req.body.isPublic ? true : false;
+        //console.log(`-------\nisPublic: ${req.body.isPublic}\nTypeOf: ${typeof(req.body.isPublic)}\nFinal Bool: ${public}\n-------`);
+
         // TODO: Strip slashes from the url, it's easier to compare it that way
         switch (req.url) {
             case '/add/':
@@ -140,6 +144,7 @@ router.post(
                     author: req.session.user,
                     description: req.body.description,
                     bounty: req.body.bountyAmount || 0,
+                    public: public
                 });
                 await vulnerability.save();
                 res.json({ status: "success" });
@@ -169,6 +174,7 @@ router.post(
                     editableVulnerability.author = req.session.user;
                     editableVulnerability.description = req.body.description;
                     editableVulnerability.bounty = req.body.bountyAmount || 0;
+                    editableVulnerability.public = public;
                     await editableVulnerability.save();
                     return res.json({ status: "success" });
                 }
@@ -226,7 +232,7 @@ router.post("/data", async (req, res) => {
             error: 'novuln'
         });
     }
-    if (vuln.author == req.session.user) {
+    if (vuln.author == req.session.user || vuln.public) {
         return res.json({
             status: 'success',
             vuln: vuln

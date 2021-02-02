@@ -7,7 +7,7 @@ block content
     .container-fluid.justify-content-center.mt-3
         .row.justify-content-center
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary.color-brown.mb-3
-                h1#vulnOverviewHeader Discovery Overview - #{vuln.vtid}
+                h1#vulnOverviewHeader(vtid=vuln.vtid) Discovery Overview - #{vuln.vtid}
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.color-brown
                     .row
                         ul.nav.nav-tabs.mb-3#profileTabs.rounded-top-3(role="tablist")
