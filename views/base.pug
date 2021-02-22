@@ -33,7 +33,7 @@ html
                                 i(style='vertical-align: middle;' class='fas fa-sign-in-alt fa-2x').me-2.ms-2.float-start
                                 | Sign In
         #sidebar.sidebar
-            +sidebarOption('fas fa-shield-alt', 'Activity', '#')
+            +sidebarOption('fas fa-shield-alt', 'Activity', '/activity')
             if username
                 +sidebarOption('fas fa-tools', 'Manage', '/vuln')
             +sidebarOption('fas fa-users', 'Groups', '#')
@@ -44,4 +44,4 @@ html
         .content
             block content
         footer#footer.text-center.mt-3
-            p.my-2.copyright Copyright (c) 2020 VulnerabiliTea — Dev Build 2021/02/01
+            p.my-2.copyright Copyright (c) 2020 VulnerabiliTea — #{versionCode}

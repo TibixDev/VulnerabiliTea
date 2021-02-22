@@ -1,0 +1,34 @@
+extends base.pug
+
+mixin activityTemplate(vtid, author, affectedProduct, affectedFeature, type, cvss)
+    .activityElement.my-3.color-white
+        .d-flex.flex-column.float-start.me-3.bg-primary.rounded.activitySection
+            i.fas.fa-arrow-up.mx-2.mt-2.upvoteArrow
+            p.mx-2(style='margin: 0.3em;') ?
+            i.fas.fa-arrow-down.mx-2.downvoteArrow
+        .ms-5.bg-primary.rounded
+            .ms-2.activitySection
+                .pb-1
+                a(href='/vuln/' + vtid).color-white
+                    h5.d-inline= vtid
+                a(href='/profile/' + author).color-white
+                    h5.d-inline.float-end.me-2= author
+                p.mt-1= affectedProduct + ' - ' + affectedFeature + ' - ' + type + ' ('
+                    | <strong class="cvssScore">#{cvss}</strong>)
+
+block headblock
+    - var title = 'Activity'
+
+block content
+    .container-fluid.justify-content-center.mt-3
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary.color-brown.mb-3
+                h1 Activity
+            .col-xl-7.col-lg-10.col-md-12.col-sm-12.color-brown#vulnActivityCol
+                //+activityTemplate('vt-3e1g4f', 'Tibix', 'Krunker.io', 'Map Editor', 'Stored XSS', '9.6')
+                //+activityTemplate('vt-bd4fsa', 'Tibix', 'Krunker.io', 'Profile Viewer', 'SSRF', '1.7')
+                //+activityTemplate('vt-4jl43s', 'Tibix', 'Krunker.io', 'Electron Client', 'RCE', '8.6')
+                //+activityTemplate('vt-7ni5w3', 'Tibix', 'Krunker.io', 'Settings Import', 'Stored XSS', '6.4')
+        .row.justify-content-center.mt-3
+            .col-lg-4.col-xl-5.col-md-8.col-sm-10.d-flex.justify-content-center
+                #activityLoader

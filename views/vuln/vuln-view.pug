@@ -40,4 +40,10 @@ block content
                                 strong Status: 
                                 span.status
                                     strong #{vuln.status}
+                            p
+                                strong Visibility: 
+                                if vuln.public
+                                    | Public
+                                else
+                                    | Private
                         .tab-pane.fade#vulnDescriptionTab.col-xl-5.col-l-6.col-md-8.col-sm-10.w-100.mb-5(role="tabpanel" aria-labelledby="vulnDescriptionTabControl")

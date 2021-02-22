@@ -11,7 +11,7 @@ const express = require('express'),
     helpers = require('./helpers/helpers.js'),
     User = require('./db/models/user.js');
 
-/* Middlewares that enable use to:
+/* Middlewares that enable us to:
         - Serve static pages
         - Use Pug to render
         - Receive better formatted POST requests
@@ -28,7 +28,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 // Configure Mongo & Express Session Store
-
 const store = new MongoStore({
     uri: Config.session.connection,
     collection: Config.session.collection
@@ -42,33 +41,32 @@ app.use(session({
 }));
 
 // Pass username to Pug templates when possible
-
 app.use(async (req, res, next) => {
     if (req.session.user) {
         let user = await User.findOne({_id: req.session.user});
         res.locals.username = user.username;
+        res.locals.versionCode = Config.versionCode;
     }
     next();
 })
 
 // Configure Flashes and Cookies
-
 app.use(cookieParser());
 app.use(flash());
 
 // Routing requests to the correct routers
-
 const routes = require('./routes/routes.js');
 
 app.use('/', routes.index);
 app.use('/vuln', routes.vuln);
+app.use('/activity', routes.activity);
 app.use('/user', routes.user);
+app.use('/files', routes.files);
 app.all('/*', (req, res, next) => {
    return helpers.sendError(res, 400);
 }) 
 
 // Host the app on the port specified so it is accessible with a browser
-
 app.listen(Config.port, () => {
     console.log(`VulnerabiliTea started on port ${Config.port}`);
 });

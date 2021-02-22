@@ -33,4 +33,18 @@ function sendError(res, errCode) {
     });
 }
 
-module.exports = { isLoggedIn, sendError };
+function sendStyledJSONErr(res, errs) {
+    let errList = [];
+    for (err of errs) {
+        console.log(err.msg);
+        errList.push({
+                noteType: "note-danger",
+                pretext: "Error ",
+                value: err.msg,
+        });
+    }
+    //console.log(errs);
+    return res.json({ status: "failed", msgs: errList });
+}
+
+module.exports = { isLoggedIn, sendError, sendStyledJSONErr };

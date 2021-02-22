@@ -1,5 +1,6 @@
 {
     "version": "0.0.1",
+    "versionCode": "Geranium Starfish",
     "port": 80,
     "session": {
         "connection": "mongodb://localhost/VulnerabiliTea",
@@ -8,5 +9,12 @@
     },
     "database": {
         "connection": "mongodb://localhost/VulnerabiliTea"
+    },
+    "activity": {
+        "maxPageDisplay": 7,
+        "vulnsPerRequest": 25
+    },
+    "upload": {
+        "maxFileSizeInMB": 1
     }
 }

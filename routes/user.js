@@ -2,7 +2,7 @@
 const express = require('express'),
     router = express.Router(),
     helpers = require('../helpers/helpers.js'),
-    User = require('../db/models/user.js');
+    User = require('../db/models/user.js'),
     Vulnerability = require('../db/models/vulnerability.js');
 
 router.get('/profile', helpers.isLoggedIn, async (req, res) => {

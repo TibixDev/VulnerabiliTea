@@ -13,7 +13,7 @@ block content
         .row.justify-content-center
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.mt-3
                 .row#infoDiv
-                form#vulnForm(action='/vuln/add/' method='post')
+                form#vulnForm(action='/vuln/add/' method='post' encType='multipart/form-data')
                     .row
                         .col-6.mb-3
                             .mb-3
@@ -54,7 +54,7 @@ block content
                         .col-6.mb-4
                             .form-group
                                 label.form-label(for='pocFileSelector') Proof Of Concept
-                                input#pocFileSelector.form-control.form-control-file(type='file')
+                                input#pocFileSelector.form-control.form-control-file(type='file' name='vulnAttachment' accept='.zip')
                         .col-6.mb-4
                             .form-group
                                 label.form-label(for='bountyAmount') Bounty Amount
