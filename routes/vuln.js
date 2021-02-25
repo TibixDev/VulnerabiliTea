@@ -152,7 +152,7 @@ router.post(
                 errors.push({
                     noteType: "note-danger",
                     pretext: "Error ",
-                    msg: "Invalid file type"
+                    msg: "Invalid file type (zip expected)"
                 });
             }
         }
@@ -163,12 +163,12 @@ router.post(
 
         let public = req.body.isPublic ? true : false;
 
-        // TODO: Strip slashes from the url, it's easier to compare it that way
+        req.url = req.url.replace(/\//g, '');
         switch (req.url) {
-            case "/add/":
+            case "add":
                 let generatedVtid =
                     "vt-" + crypto.randomBytes(3).toString("hex");
-                if (req.files.vulnAttachment) {
+                if (req.files) {
                     await uploadVulnAttachment(
                         req.files.vulnAttachment,
                         generatedVtid
@@ -187,12 +187,16 @@ router.post(
                     author: req.session.user,
                     description: req.body.description,
                     bounty: req.body.bountyAmount || 0,
+                    attachments: {
+                        file: req.files.vulnAttachment.name,
+                        size: req.files.vulnAttachment.size
+                    },
                     public: public,
                 });
                 await vulnerability.save();
                 res.json({ status: "success" });
                 break;
-            case "/edit/":
+            case "edit":
                 if (!req.body.vtid) {
                     return res.status(400).json({
                         status: "failed",

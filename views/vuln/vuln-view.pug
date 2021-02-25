@@ -1,5 +1,11 @@
 extends ../base.pug
 
+mixin attachmentEntry(attachment)
+    .col-3.bg-primary.rounded.color-white.text-center
+        a.color-white(href='/files/' + vuln.vtid + '/' + attachment.file)
+            i.fas.fa-file-archive.fa-3x.mt-2
+            p.my-1#attachmentTitle= attachment.file
+
 block headblock
     - var title = 'View Discovery'
 
@@ -46,4 +52,9 @@ block content
                                     | Public
                                 else
                                     | Private
+                            strong Attachments:
+                            if vuln.attachments
+                                each attachment in vuln.attachments
+                                    +attachmentEntry(attachment)
+
                         .tab-pane.fade#vulnDescriptionTab.col-xl-5.col-l-6.col-md-8.col-sm-10.w-100.mb-5(role="tabpanel" aria-labelledby="vulnDescriptionTabControl")
