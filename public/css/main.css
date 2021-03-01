@@ -24,6 +24,10 @@ html, body {
     color: white!important;
 }
 
+.color-silver {
+    color: #EEEEEE!important;
+}
+
 .bg-brown {
     background-color: #492a15!important;
 }
@@ -257,6 +261,14 @@ header {
 #detailsTab {
     font-size: 1.2rem;
     font-weight: 400;
+}
+
+.deleteAttachmentBtn {
+    cursor: pointer;
+}
+
+.strikethrough {
+    text-decoration: line-through;
 }
 
 /* Profile CSS */

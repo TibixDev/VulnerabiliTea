@@ -211,7 +211,8 @@ router.post(
 
 router.get("/logout", (req, res) => {
     if (req.session.user) {
-        // a bit hacky but is ok
+        // Since we rely on the session when it comes to flash messages
+        // We wait a second before invalidating the session
         req.session.user = "";
         req.flash("msgs", [
             {

@@ -1,5 +1,13 @@
 extends ../base.pug
 
+
+mixin attachmentEditEntry(entry)
+    .attachmentEntry
+        .d-inline-block
+            p.attachmentTitle.h4.ms-2= entry.file
+        i.deleteAttachmentBtn.fas.fa-times-circle.float-start.fa-2x
+        br
+
 block headblock
     - var title = 'Edit Discovery'
 
@@ -54,13 +62,22 @@ block content
                         .col-6.mb-4
                             .form-group
                                 label.form-label(for='pocFileSelector') Proof Of Concept
-                                input#pocFileSelector.form-control.form-control-file(type='file')
+                                input#pocFileSelector.form-control.form-control-file(type='file' name='vulnAttachment' accept='.zip' multiple)
                         .col-6.mb-4
                             .form-group
                                 label.form-label(for='bountyAmount') Bounty Amount
                                 .input-group
                                     input.form-control(name='bountyAmount' type='number' id='bountyAmount' value=vuln.bounty placeholder='100' aria-describedby='bountyAddon' aria-label='Bounty' required)
                                     span.bg-silver.input-group-text#bountyAddon USD
+                    if vuln.attachments.length > 0
+                        .row
+                            .col-12.mb-4
+                                .form-group
+                                    p.mb-1.color-brown Attachments
+                                    .attachments.color-brown
+                                        each entry in vuln.attachments
+                                            +attachmentEditEntry(entry)
+
                     .row.justify-content-center.text-center
                         .col-8
                             button.btn.btn-primary.vulnSubmitBtn Confirm Edit

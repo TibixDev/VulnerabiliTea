@@ -87,7 +87,7 @@ function escapeHtml (string) {
   });
 }
 
-// Everything else
+// Everything else (onDocumentReady short form)
 $(() => {
     if ($(".trumbowyg").length) {
         $.trumbowyg.svgPath = "/res/trumbowyg/icos/icons.svg";
@@ -113,6 +113,28 @@ $(() => {
         });
     }
 
+    // Handle attachment deletion queue
+
+    let toBeDeletedAttachments = [];
+    $(".deleteAttachmentBtn").click(function() {
+            let attachmentName = $(this).closest(".attachmentEntry").find('.attachmentTitle').first().text();
+            console.log($(this).closest('p'));
+            if (!toBeDeletedAttachments.includes(attachmentName)) {
+                toBeDeletedAttachments.push(attachmentName);
+                $(this).removeClass('fa-times-circle');
+                $(this).addClass('fa-trash');
+                $(this).closest(".attachmentEntry").find('.attachmentTitle').first().addClass('strikethrough');
+            } else {
+                toBeDeletedAttachments.splice(toBeDeletedAttachments.indexOf(attachmentName), 1);
+                $(this).addClass('fa-times-circle');
+                $(this).removeClass('fa-trash');
+                $(this).closest(".attachmentEntry").find('.attachmentTitle').first().removeClass('strikethrough');
+            }
+            console.log('Array: ' + toBeDeletedAttachments + '\nName: ' + attachmentName);
+    });
+
+    // Handle editing and creating new vulnerabilities
+
     $("#vulnForm").submit((e) => {
         let actionUrl = $("#vulnForm").attr("action");
         e.preventDefault();
@@ -123,6 +145,9 @@ $(() => {
             modeVerb = "modified";
         }
         fData.append("description", $(".trumbowyg-editor").html());
+        if (toBeDeletedAttachments.length > 0) {
+            fData.append("deletionQueue", JSON.stringify(toBeDeletedAttachments));
+        }
 
         $.ajax({
             type: "POST",

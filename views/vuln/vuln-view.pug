@@ -52,8 +52,8 @@ block content
                                     | Public
                                 else
                                     | Private
-                            strong Attachments:
                             if vuln.attachments
+                                strong Attachments:
                                 each attachment in vuln.attachments
                                     +attachmentEntry(attachment)
 

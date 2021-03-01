@@ -12,7 +12,6 @@ router.use('/:vtid/:file', async (req, res, next) => {
         vtid: req.params.vtid
     }).lean();
     if (!vuln) {
-        console.log(vuln);
         return helpers.sendError(res, 400);
     }
     if (vuln.author != req.session.user) {

@@ -7,7 +7,8 @@ const express = require("express"),
     crypto = require("crypto"),
     Config = require("../config/config.json"),
     fs = require("fs"),
-    fileType = require("file-type");
+    fileType = require("file-type"),
+    path = require("path");
 
 // Model Imports
 const User = require("../db/models/user.js");
@@ -137,6 +138,7 @@ router.post(
     ],
     async (req, res) => {
         let errors = [];
+        let fileDBEntries = []
 
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {
@@ -145,14 +147,18 @@ router.post(
 
         async function uploadVulnAttachment(file, vtid) {
             let ft = await fileType.fromBuffer(file.data);
-            if (ft && ft.ext == 'zip') {
+            if (ft && ft.ext == "zip") {
                 file.mv(`files/${vtid}/${file.name}`);
-            }
-            else {
+                console.log(`Current fileDBEntries: ${JSON.stringify(fileDBEntries)}\nFile: ${file.name}\nSize: ${file.size}`);
+                //fileDBEntries.push({ file : file.name, size : file.size });
+                console.log(`Pushed ${file.name} to fileDBEntries`);
+                console.log(`Current fileDBEntries: ${JSON.stringify(fileDBEntries)}`);
+                return { file : file.name, size : file.size };
+            } else {
                 errors.push({
                     noteType: "note-danger",
                     pretext: "Error ",
-                    msg: "Invalid file type (zip expected)"
+                    msg: `[${file.name}] Invalid file type (zip expected, received ${ft.ext})`,
                 });
             }
         }
@@ -163,20 +169,32 @@ router.post(
 
         let public = req.body.isPublic ? true : false;
 
-        req.url = req.url.replace(/\//g, '');
+        req.url = req.url.replace(/\//g, "");
         switch (req.url) {
             case "add":
                 let generatedVtid =
                     "vt-" + crypto.randomBytes(3).toString("hex");
                 if (req.files) {
-                    await uploadVulnAttachment(
-                        req.files.vulnAttachment,
-                        generatedVtid
-                    );
+                    // We have to handle single and multiple uploads seperately,
+                    // Because otherwise it doesn't work
+                    if (req.files.vulnAttachment instanceof Array) {
+                        for (let i = 0; i < req.files.vulnAttachment.length; i++) {
+                            fileDBEntries.push(await uploadVulnAttachment(req.files.vulnAttachment[i], generatedVtid));
+                        }
+                    } else {
+                        fileDBEntries.push(await uploadVulnAttachment(req.files.vulnAttachment, generatedVtid));
+                    }
+
+                    // This is not good practice, someone could teoretically
+                    // fill the server with garbage without any VTID relations
+                    // TODO: Implement a warning system, fix this function
                     if (errors.length > 0) {
                         return helpers.sendStyledJSONErr(res, errors);
                     }
                 }
+
+                console.log(fileDBEntries);
+
                 let vulnerability = new Vulnerability({
                     vtid: generatedVtid,
                     cvss: req.body.cvssScore,
@@ -187,10 +205,7 @@ router.post(
                     author: req.session.user,
                     description: req.body.description,
                     bounty: req.body.bountyAmount || 0,
-                    attachments: {
-                        file: req.files.vulnAttachment.name,
-                        size: req.files.vulnAttachment.size
-                    },
+                    attachments: fileDBEntries,
                     public: public,
                 });
                 await vulnerability.save();
@@ -212,6 +227,37 @@ router.post(
                         error: "novuln",
                     });
                 }
+
+                if (req.body.deletionQueue) {
+                    req.body.deletionQueue = JSON.parse(req.body.deletionQueue);
+                    if (editableVulnerability.attachments.length > 0) {
+                        for (queueEntry of req.body.deletionQueue) {
+                            for (attachmentEntry of editableVulnerability.attachments) {
+                                if (attachmentEntry.file == queueEntry) {
+                                    editableVulnerability.attachments.splice(
+                                        attachmentEntry,
+                                        1
+                                    );
+                                    await fs.unlink(
+                                        path.join(
+                                            __dirname,
+                                            `../files/${req.body.vtid}/${queueEntry}`
+                                        ),
+                                        (err) => {
+                                            if (err) {
+                                                console.log(
+                                                    `Error deleting attachment ${queueEntry} of ${req.body.vtid}`
+                                                );
+                                            }
+                                        }
+                                    );
+                                    await editableVulnerability.save();
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if (editableVulnerability.author == req.session.user) {
                     editableVulnerability.cvss = req.body.cvssScore;
                     editableVulnerability.type = req.body.vulnType;
