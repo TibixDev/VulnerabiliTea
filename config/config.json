@@ -15,6 +15,6 @@
         "vulnsPerRequest": 25
     },
     "upload": {
-        "maxFileSizeInMB": 1
+        "maxFileSizeInMB": 50
     }
 }

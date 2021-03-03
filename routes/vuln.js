@@ -138,7 +138,7 @@ router.post(
     ],
     async (req, res) => {
         let errors = [];
-        let fileDBEntries = []
+        let fileDBEntries = [];
 
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {
@@ -149,11 +149,16 @@ router.post(
             let ft = await fileType.fromBuffer(file.data);
             if (ft && ft.ext == "zip") {
                 file.mv(`files/${vtid}/${file.name}`);
-                console.log(`Current fileDBEntries: ${JSON.stringify(fileDBEntries)}\nFile: ${file.name}\nSize: ${file.size}`);
-                //fileDBEntries.push({ file : file.name, size : file.size });
+                console.log(
+                    `Current fileDBEntries: ${JSON.stringify(
+                        fileDBEntries
+                    )}\nFile: ${file.name}\nSize: ${file.size}`
+                );
                 console.log(`Pushed ${file.name} to fileDBEntries`);
-                console.log(`Current fileDBEntries: ${JSON.stringify(fileDBEntries)}`);
-                return { file : file.name, size : file.size };
+                console.log(
+                    `Current fileDBEntries: ${JSON.stringify(fileDBEntries)}`
+                );
+                return { file: file.name, size: file.size };
             } else {
                 errors.push({
                     noteType: "note-danger",
@@ -178,11 +183,25 @@ router.post(
                     // We have to handle single and multiple uploads seperately,
                     // Because otherwise it doesn't work
                     if (req.files.vulnAttachment instanceof Array) {
-                        for (let i = 0; i < req.files.vulnAttachment.length; i++) {
-                            fileDBEntries.push(await uploadVulnAttachment(req.files.vulnAttachment[i], generatedVtid));
+                        for (
+                            let i = 0;
+                            i < req.files.vulnAttachment.length;
+                            i++
+                        ) {
+                            fileDBEntries.push(
+                                await uploadVulnAttachment(
+                                    req.files.vulnAttachment[i],
+                                    generatedVtid
+                                )
+                            );
                         }
                     } else {
-                        fileDBEntries.push(await uploadVulnAttachment(req.files.vulnAttachment, generatedVtid));
+                        fileDBEntries.push(
+                            await uploadVulnAttachment(
+                                req.files.vulnAttachment,
+                                generatedVtid
+                            )
+                        );
                     }
 
                     // This is not good practice, someone could teoretically
@@ -256,6 +275,47 @@ router.post(
                             }
                         }
                     }
+                }
+
+                if (req.files) {
+                    if (req.files.vulnAttachment instanceof Array) {
+                        for (
+                            let i = 0;
+                            i < req.files.vulnAttachment.length;
+                            i++
+                        ) {
+                            fileDBEntries.push(
+                                await uploadVulnAttachment(
+                                    req.files.vulnAttachment[i],
+                                    editableVulnerability.vtid
+                                )
+                            );
+                        }
+                    } else {
+                        fileDBEntries.push(
+                            await uploadVulnAttachment(
+                                req.files.vulnAttachment,
+                                editableVulnerability.vtid
+                            )
+                        );
+                    }
+                }
+
+                if (errors.length > 0) {
+                    return helpers.sendStyledJSONErr(res, errors);
+                }
+
+                if (fileDBEntries.length > 0) {
+                    // Avoid duplicates and outdated information
+                    for (entry of fileDBEntries) {
+                        for (existingEntry of editableVulnerability.attachments) {
+                            if (existingEntry.name == entry.name) {
+                                editableVulnerability.attachments.splice(editableVulnerability.attachments.indexOf(existingEntry), 1);
+                            }
+                        }
+                    }
+                    // ... is needed because if we want to push something with multiple entries then we must spread it with ...
+                    editableVulnerability.attachments.push(...fileDBEntries);
                 }
 
                 if (editableVulnerability.author == req.session.user) {

@@ -48,6 +48,9 @@ html, body {
     background-color: white!important;
 }
 
+.strikethrough {
+    text-decoration: line-through;
+}
 
 
 /* Index CSS */
@@ -263,12 +266,19 @@ header {
     font-weight: 400;
 }
 
-.deleteAttachmentBtn {
+.pointerCur {
     cursor: pointer;
 }
 
-.strikethrough {
-    text-decoration: line-through;
+.attachmentContainer {
+    width: 150px;
+    max-width: 150px;
+}
+
+.attachmentTitle {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 /* Profile CSS */
