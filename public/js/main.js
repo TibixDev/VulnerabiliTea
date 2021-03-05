@@ -184,7 +184,7 @@ $(() => {
                     $("#infoDiv").append(`
                     <div class='text-dark my-2 mx-1 note note-danger'>
                         <strong>Error </strong>
-                        You've reached the upload limit of 50MB.
+                        You've reached the upload limit.
                     </div>`);
                 }
             },

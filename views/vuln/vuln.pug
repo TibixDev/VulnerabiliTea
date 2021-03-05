@@ -16,4 +16,8 @@ block content
         .row.justify-content-center
             .col-xl-8.col-lg-10.col-md-12.col-sm-12.mt-3
                     +vulnTable(vulns)
+                    if vulns.length < 1
+                        .row.text-center.color-brown.mt-3
+                            h2 Things seem rather empty here... Why don't you add a new discovery?
+                            h5 (We believe in you)
 

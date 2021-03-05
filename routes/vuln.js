@@ -154,7 +154,6 @@ router.post(
                         fileDBEntries
                     )}\nFile: ${file.name}\nSize: ${file.size}`
                 );
-                console.log(`Pushed ${file.name} to fileDBEntries`);
                 console.log(
                     `Current fileDBEntries: ${JSON.stringify(fileDBEntries)}`
                 );
