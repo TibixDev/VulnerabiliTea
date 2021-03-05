@@ -68,5 +68,5 @@ app.all('/*', (req, res, next) => {
 
 // Host the app on the port specified so it is accessible with a browser
 app.listen(process.env.PORT || Config.port, () => {
-    console.log(`VulnerabiliTea started on port ${Config.port}`);
+    console.log(`VulnerabiliTea started on port ${process.env.PORT || Config.port}`);
 });

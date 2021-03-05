@@ -1,4 +1,4 @@
-include includes\global_mixins.pug
+include includes/global_mixins.pug
 
 mixin sidebarOption(faico, title, link)
     .d-inline.w-100
@@ -11,9 +11,9 @@ html
     head
         block headblock
         title= 'VulnerabiliTea - ' + title
-        include includes\head_includes.pug
+        include includes/head_includes.pug
     body
-        include includes\body_includes.pug
+        include includes/body_includes.pug
         header#header.container-fluid.topNavContainer
             .row.topNavRow.justify-content-center
                 .col-6.headerCol.text-center.d-flex.align-items-center
