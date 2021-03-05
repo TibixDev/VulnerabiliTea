@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGODB_URI || Config.database.connection, {
 const con = mongoose.connection;
 
 con.on('open', () => {
-    console.log('Connected to MongoDB!');
+    console.log(`Connected to MongoDB! (${process.env.MONGODB_URI || Config.database.connection})`);
 })
 
 con.on('disconnected', () => {
