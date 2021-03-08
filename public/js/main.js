@@ -87,8 +87,7 @@ function escapeHtml (string) {
   });
 }
 
-// Everything else (onDocumentReady short form)
-$(() => {
+// Initialize Trumbowyg
     if ($(".trumbowyg").length) {
         $.trumbowyg.svgPath = "/res/trumbowyg/icos/icons.svg";
         $(".trumbowyg").trumbowyg({
@@ -114,7 +113,6 @@ $(() => {
     }
 
     // Handle attachment deletion queue
-
     let toBeDeletedAttachments = [];
     $(".deleteAttachmentBtn").click(function() {
             let attachmentName = $(this).closest(".attachmentEntry").find('.attachmentTitle').first().text();
@@ -134,7 +132,6 @@ $(() => {
     });
 
     // Handle editing and creating new vulnerabilities
-
     $("#vulnForm").submit((e) => {
         let actionUrl = $("#vulnForm").attr("action");
         e.preventDefault();
@@ -370,4 +367,3 @@ $(() => {
             }
         });
     }
-});
