@@ -29,7 +29,7 @@ app.use(bodyParser.json())
 
 // Configure Mongo & Express Session Store
 const store = new MongoStore({
-    uri: Config.session.connection,
+    uri: process.env.MONGODB_URI || Config.session.connection,
     collection: Config.session.collection
 });
 
