@@ -43,10 +43,11 @@ app.use(session({
 // Pass username to Pug templates when possible
 app.use(async (req, res, next) => {
     if (req.session.user) {
-        let user = await User.findOne({_id: req.session.user});
+        let user = await User.findById(req.session.user).lean();
         res.locals.username = user.username;
-        res.locals.versionCode = Config.versionCode;
     }
+    res.locals.versionCode = Config.versionCode;
+    res.locals.version = Config.version;
     next();
 })
 

@@ -1,6 +1,6 @@
 {
-    "version": "0.0.1",
-    "versionCode": "Geranium Starfish",
+    "version": "0.1.0",
+    "versionCode": "White Grizzly",
     "port": 80,
     "session": {
         "connection": "mongodb://localhost/VulnerabiliTea",

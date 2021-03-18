@@ -207,7 +207,7 @@ function escapeHtml (string) {
 
     $(".regDate").each((i, obj) => {
         $(obj).html(
-            "<p><strong>Register Date: </strong>" +
+            "<p><strong>Registration Date: </strong>" +
                 new Date($(obj).text()).toUTCString() +
                 "</p>"
         );
@@ -306,10 +306,11 @@ function escapeHtml (string) {
 
         function appendVulnActivity(vuln) {
             vuln.vtid = escapeHtml(vuln.vtid);
-            vuln.author = escapeHtml(vuln.author);
+            vuln.authorName = escapeHtml(vuln.authorName);
             vuln.affectedProduct = escapeHtml(vuln.affectedProduct);
             vuln.affectedFeature = escapeHtml(vuln.affectedFeature);
             vuln.cvss = escapeHtml(vuln.cvss);
+            vuln.authorName = escapeHtml(vuln.authorName);
 
             $("#vulnActivityCol").append(
                 `<div class="activityElement my-3 color-white"> <div class="d-flex flex-column float-start me-3 bg-primary rounded activitySection"><i class="fas fa-arrow-up mx-2 mt-2 upvoteArrow"></i> <p class="mx-2" style="margin: 0.3em;">${
@@ -318,10 +319,10 @@ function escapeHtml (string) {
                     vuln.vtid
                 }"><h5 class="d-inline">${
                     vuln.vtid
-                }</h5></a><a class="color-white" href="/profile/${
+                }</h5></a><a class="color-white" href="user/profile/${
                     vuln.author
                 }"><h5 class="d-inline float-end me-2">${
-                    vuln.author
+                    vuln.authorName
                 }</h5></a><p class="mt-1">${vuln.affectedProduct} - ${
                     vuln.affectedFeature
                 } - ${vuln.type} (<strong class="cvssScore">${

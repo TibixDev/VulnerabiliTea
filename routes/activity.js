@@ -17,7 +17,7 @@ router.post("/getActivity", async (req, res) => {
     }
     let vulns = await Vulnerability.find({
         public: true,
-    })
+    })  .lean()
         .sort({ dateReported: -1 })
         .skip(req.body.skipCount * Config.activity.vulnsPerRequest)
         .limit(Config.activity.vulnsPerRequest);
@@ -28,11 +28,10 @@ router.post("/getActivity", async (req, res) => {
             err: "endReached"
         });
     }
+
     for (vuln of vulns) {
-        let authorObj = await User.findOne({
-            _id: vuln.author
-        });
-        vuln.author = authorObj.username;
+        let authorObj = await User.findById(vuln.author);
+        vuln.authorName = authorObj.username;
     }
     return res.json({
         status: "success",
@@ -56,9 +55,7 @@ router.post("/processVote", async (req, res) => {
         });
     }
     
-    let vuln = await Vulnerability.findOne({
-        _id: req.body.vtid
-    })
+    let vuln = await Vulnerability.findById(req.body.vtid);
 
     if (!vuln) {
         return res.status(400).json({

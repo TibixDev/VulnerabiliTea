@@ -42,16 +42,14 @@ router.get("/add", helpers.isLoggedIn, (req, res) => {
 // View Vulnerability (template)
 router.get("/id/:vulnID", async (req, res) => {
     let vuln = await Vulnerability.findOne({
-        vtid: req.params.vulnID,
-    });
+        vtid: req.params.vulnID
+    }).lean();
     if (vuln) {
         if (vuln.author == req.session.user || vuln.public) {
             //TabID -> Content AriaLabeledBy
             //TabHREF -> TabAriaControls -> Content ID
-            let author = await User.findOne({
-                _id: vuln.author,
-            });
-            vuln.author = author.username;
+            let author = await User.findById(vuln.author);
+            vuln.authorName = author.username;
             return res.render("vuln/vuln-view", { vuln });
         } else {
             return helpers.sendError(res, 403);
@@ -69,9 +67,7 @@ router.get("/edit/:vulnID", async (req, res) => {
         if (vuln.author == req.session.user) {
             //TabID -> Content AriaLabeledBy
             //TabHREF -> TabAriaControls -> Content ID
-            let author = await User.findOne({
-                _id: req.session.user,
-            });
+            let author = await User.findById(req.session.user);
             vuln.author = author.username;
             return res.render("vuln/vuln-edit", { vuln });
         } else {

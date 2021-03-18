@@ -11,7 +11,7 @@ mixin activityTemplate(vtid, author, affectedProduct, affectedFeature, type, cvs
                 .pb-1
                 a(href='/vuln/' + vtid).color-white
                     h5.d-inline= vtid
-                a(href='/profile/' + author).color-white
+                a(href='/user/profile/#{author}').color-white
                     h5.d-inline.float-end.me-2= author
                 p.mt-1= affectedProduct + ' - ' + affectedFeature + ' - ' + type + ' ('
                     | <strong class="cvssScore">#{cvss}</strong>)
