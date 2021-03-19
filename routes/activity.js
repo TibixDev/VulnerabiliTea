@@ -17,7 +17,8 @@ router.post("/getActivity", async (req, res) => {
     }
     let vulns = await Vulnerability.find({
         public: true,
-    })  .lean()
+    }, 'author vtid cvss type affectedProduct affectedFeature')  
+        .lean()
         .sort({ dateReported: -1 })
         .skip(req.body.skipCount * Config.activity.vulnsPerRequest)
         .limit(Config.activity.vulnsPerRequest);
@@ -30,7 +31,7 @@ router.post("/getActivity", async (req, res) => {
     }
 
     for (vuln of vulns) {
-        let authorObj = await User.findById(vuln.author);
+        let authorObj = await User.findById(vuln.author, 'username').lean();
         vuln.authorName = authorObj.username;
     }
     return res.json({

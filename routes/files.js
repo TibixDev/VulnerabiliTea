@@ -10,7 +10,7 @@ const express = require('express'),
 router.use('/:vtid/:file', async (req, res, next) => {
     let vuln = await Vulnerability.findOne({
         vtid: req.params.vtid
-    }).lean();
+    }, 'author public').lean();
     if (!vuln) {
         return helpers.sendError(res, 400);
     }

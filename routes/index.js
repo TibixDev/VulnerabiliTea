@@ -39,7 +39,7 @@ router.post("/login", async (req, res) => {
     }
     let user = await User.findOne({
         email: req.body.email,
-    });
+    }, 'password _id');
     if (!user) {
         return res.render("login", {
             msgs: [

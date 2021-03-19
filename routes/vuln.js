@@ -31,7 +31,7 @@ router.use(
 
 // View all entries belonging to the user
 router.get("/", helpers.isLoggedIn, async (req, res) => {
-    let vulns = await Vulnerability.find({ author: req.session.user });
+    let vulns = await Vulnerability.find({ author: req.session.user }, '-description -attachments');
     res.render("vuln/vuln", { vulns, ownEntries: "true" });
 });
 
@@ -48,7 +48,7 @@ router.get("/id/:vulnID", async (req, res) => {
         if (vuln.author == req.session.user || vuln.public) {
             //TabID -> Content AriaLabeledBy
             //TabHREF -> TabAriaControls -> Content ID
-            let author = await User.findById(vuln.author);
+            let author = await User.findById(vuln.author, 'username').lean();
             vuln.authorName = author.username;
             return res.render("vuln/vuln-view", { vuln });
         } else {
@@ -62,12 +62,12 @@ router.get("/id/:vulnID", async (req, res) => {
 router.get("/edit/:vulnID", async (req, res) => {
     let vuln = await Vulnerability.findOne({
         vtid: req.params.vulnID,
-    });
+    }).lean();
     if (vuln) {
         if (vuln.author == req.session.user) {
             //TabID -> Content AriaLabeledBy
             //TabHREF -> TabAriaControls -> Content ID
-            let author = await User.findById(req.session.user);
+            let author = await User.findById(req.session.user, 'username').lean();
             vuln.author = author.username;
             return res.render("vuln/vuln-edit", { vuln });
         } else {
@@ -346,7 +346,7 @@ router.delete("/delete", helpers.isLoggedIn, async (req, res) => {
     }
     let vuln = await Vulnerability.findOne({
         vtid: req.body.vtid,
-    });
+    }, 'author vtid');
     if (!vuln) {
         return res.status(400).json({
             status: "failed",
@@ -388,7 +388,7 @@ router.post("/data", async (req, res) => {
     }
     let vuln = await Vulnerability.findOne({
         vtid: req.body.vtid,
-    });
+    }, 'author description public').lean();
     if (!vuln) {
         return res.status(400).json({
             status: "failed",
