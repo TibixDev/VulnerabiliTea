@@ -1,12 +1,10 @@
 function isLoggedIn(req, res, next) {
     if (!req.session.user) {
-        req.flash("msgs", [
-            {
-                noteType: "note-warning",
-                pretext: "Warning",
-                value: "You have to be logged in to access the requested page.",
-            },
-        ]);
+        req.flash("msgs", [{
+            noteType: "note-warning",
+            pretext: "Warning",
+            value: "You have to be logged in to access the requested page.",
+        }, ]);
         return res.redirect("/login");
     }
     next();
@@ -33,18 +31,46 @@ function sendError(res, errCode) {
     });
 }
 
-function sendStyledJSONErr(res, errs) {
+function sendStyledJSONErr(res, errs, code = 200) {
     let errList = [];
     for (err of errs) {
-        console.log(err.msg);
         errList.push({
-                noteType: "note-danger",
-                pretext: "Error ",
-                value: err.msg,
+            noteType: "note-danger",
+            pretext: "Error ",
+            value: err.msg.text || err.msg,
+            errType: err.msg.type || err.type
         });
     }
-    //console.log(errs);
-    return res.json({ status: "failed", msgs: errList });
+    return res.status(code).json({
+        status: "failed",
+        msgs: errList
+    });
 }
 
-module.exports = { isLoggedIn, sendError, sendStyledJSONErr };
+async function tokenValid(vuln, token) {
+    let tokenMatches = vuln.tokens.filter(
+        (t) => t.code === token
+    );
+    //console.log('TokenMatches Length: ' + tokenMatches.length);
+    if (tokenMatches.length < 1) {
+        return false;
+    }
+    if (tokenMatches[0].expiryDate < Date.now()) {
+        //console.log('Token is expired: ' + token);
+
+        // TODO: Make a suitable replacement for this garbage
+        //vuln.tokens = vuln.tokens.filter(
+        //    (t) => t.code != token
+        //);
+        //await vuln.save();
+        return false;
+    }
+    return true
+}
+
+module.exports = {
+    isLoggedIn,
+    sendError,
+    sendStyledJSONErr,
+    tokenValid
+};

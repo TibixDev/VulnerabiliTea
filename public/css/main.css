@@ -323,6 +323,17 @@ header {
     color: gray;
 }
 
+/* ExpiryDatePicker CSS */
+#expiryDatePicker {
+    border: none;
+    height: 30px;
+}
+
+/* Note CSS */
+.note-danger {
+    color: rgb(187, 0, 0);
+}
+
 /* !!!!!!!!!!!!!!!!!!!! */
 /* Mobile Media-Queries */
 /* !!!!!!!!!!!!!!!!!!!! */

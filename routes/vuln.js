@@ -31,8 +31,16 @@ router.use(
 
 // View all entries belonging to the user
 router.get("/", helpers.isLoggedIn, async (req, res) => {
-    let vulns = await Vulnerability.find({ author: req.session.user }, '-description -attachments');
-    res.render("vuln/vuln", { vulns, ownEntries: "true" });
+    let vulns = await Vulnerability.find(
+        {
+            author: req.session.user,
+        },
+        "-description -attachments"
+    );
+    res.render("vuln/vuln", {
+        vulns,
+        ownEntries: "true",
+    });
 });
 
 router.get("/add", helpers.isLoggedIn, (req, res) => {
@@ -42,18 +50,27 @@ router.get("/add", helpers.isLoggedIn, (req, res) => {
 // View Vulnerability (template)
 router.get("/id/:vulnID", async (req, res) => {
     let vuln = await Vulnerability.findOne({
-        vtid: req.params.vulnID
+        vtid: req.params.vulnID,
     }).lean();
     if (vuln) {
+        let author = await User.findById(vuln.author, "username").lean();
+        vuln.authorName = author.username;
         if (vuln.author == req.session.user || vuln.public) {
             //TabID -> Content AriaLabeledBy
             //TabHREF -> TabAriaControls -> Content ID
-            let author = await User.findById(vuln.author, 'username').lean();
-            vuln.authorName = author.username;
-            return res.render("vuln/vuln-view", { vuln });
-        } else {
-            return helpers.sendError(res, 403);
+            return res.render("vuln/vuln-view", {
+                vuln,
+            });
         }
+
+        if (req.query.token && !vuln.public) {
+            if (await helpers.tokenValid(vuln, req.query.token)) {
+                return res.render("vuln/vuln-view", {
+                    vuln, token: req.query.token
+                });
+            }
+        }
+        return helpers.sendError(res, 403);
     }
     return helpers.sendError(res, 400);
 });
@@ -67,9 +84,14 @@ router.get("/edit/:vulnID", async (req, res) => {
         if (vuln.author == req.session.user) {
             //TabID -> Content AriaLabeledBy
             //TabHREF -> TabAriaControls -> Content ID
-            let author = await User.findById(req.session.user, 'username').lean();
+            let author = await User.findById(
+                req.session.user,
+                "username"
+            ).lean();
             vuln.author = author.username;
-            return res.render("vuln/vuln-edit", { vuln });
+            return res.render("vuln/vuln-edit", {
+                vuln,
+            });
         } else {
             return helpers.sendError(res, 403);
         }
@@ -89,21 +111,40 @@ router.post(
     [
         body("affectedProduct")
             .exists()
-            .withMessage("There was no affected product specified.")
-            .isLength({ min: 3, max: 32 })
-            .withMessage(
-                "The affected product specified didn't match the desired length (3-32 Characters)"
-            ),
+            .withMessage({
+                text: "There was no affected product specified.",
+                type: "noAffectedProduct",
+            })
+            .isLength({
+                min: 3,
+                max: 32,
+            })
+            .withMessage({
+                text:
+                    "The affected product specified didn't match the desired length (3-32 Characters)",
+                type: "affectedProductCharLimitMismatch",
+            }),
         body("affectedFeature")
             .exists()
-            .withMessage("There was no affected feature specified.")
-            .isLength({ min: 3, max: 32 })
-            .withMessage(
-                "The affected feature specified didn't match the desired length (3-32 Characters)"
-            ),
+            .withMessage({
+                text: "There was no affected feature specified.",
+                type: "noAffectedFeature",
+            })
+            .isLength({
+                min: 3,
+                max: 32,
+            })
+            .withMessage({
+                text:
+                    "The affected feature specified didn't match the desired length (3-32 Characters)",
+                type: "affectedFeatureCharLimitMismatch",
+            }),
         body("vulnType")
             .exists()
-            .withMessage("There was no vulnerability type specified.")
+            .withMessage({
+                text: "There was no vulnerability type specified.",
+                type: "noVulnType",
+            })
             .isIn([
                 "Reflective XSS",
                 "Stored XSS",
@@ -113,24 +154,42 @@ router.post(
                 "CSRF",
                 "Other",
             ])
-            .withMessage("The vulnerability type specified was invalid"),
+            .withMessage({
+                text: "The vulnerability type specified was invalid",
+                type: "invalidVulnType",
+            }),
         body("cvssScore")
             .exists()
-            .withMessage("There was no CVSS score specified.")
-            .isFloat({ min: 1.0, max: 10.0 })
-            .withMessage(
-                "The CVSS score specified was non-numeric, or invalid."
-            ),
+            .withMessage({
+                text: "There was no CVSS score specified.",
+                type: "noCVSS",
+            })
+            .isFloat({
+                min: 1.0,
+                max: 10.0,
+            })
+            .withMessage({
+                text: "The CVSS score specified was non-numeric, or invalid.",
+                type: "invalidCVSS",
+            }),
         body("description")
             .exists()
-            .withMessage("There was no description specified.")
-            .isLength({ min: 10 })
-            .withMessage(
-                "The description specified didn't match the desired minimum length (10+ Characters)"
-            ),
-        body("bountyAmount")
-            .isFloat()
-            .withMessage("The bounty specified was not a number."),
+            .withMessage({
+                text: "There was no description specified.",
+                type: "noDescription",
+            })
+            .isLength({
+                min: 10,
+            })
+            .withMessage({
+                text:
+                    "The description specified didn't match the desired minimum length (10+ Characters)",
+                type: "descriptionCharLimitMismatch",
+            }),
+        body("bountyAmount").isFloat().withMessage({
+            text: "The bounty specified was not a number.",
+            type: "bountyNaN",
+        }),
     ],
     async (req, res) => {
         let errors = [];
@@ -153,7 +212,10 @@ router.post(
                 console.log(
                     `Current fileDBEntries: ${JSON.stringify(fileDBEntries)}`
                 );
-                return { file: file.name, size: file.size };
+                return {
+                    file: file.name,
+                    size: file.size,
+                };
             } else {
                 errors.push({
                     noteType: "note-danger",
@@ -164,7 +226,7 @@ router.post(
         }
 
         if (errors.length > 0) {
-            return helpers.sendStyledJSONErr(res, errors);
+            return helpers.sendStyledJSONErr(res, errors, 400);
         }
 
         let public = req.body.isPublic ? true : false;
@@ -203,7 +265,7 @@ router.post(
                     // fill the server with garbage without any VTID relations
                     // TODO: Implement a warning system, fix this function
                     if (errors.length > 0) {
-                        return helpers.sendStyledJSONErr(res, errors);
+                        return helpers.sendStyledJSONErr(res, errors, 400);
                     }
                 }
 
@@ -223,23 +285,35 @@ router.post(
                     public: public,
                 });
                 await vulnerability.save();
-                res.json({ status: "success" });
+                res.json({
+                    status: "success",
+                });
                 break;
             case "edit":
                 if (!req.body.vtid) {
-                    return res.status(400).json({
-                        status: "failed",
-                        error: "emptyvtid",
-                    });
+                    return helpers.sendStyledJSONErr(
+                        res,
+                        {
+                            msg:
+                                "A vulnerability matching the supplied VTID wasn't found.",
+                            type: "notFound",
+                        },
+                        400
+                    );
                 }
                 let editableVulnerability = await Vulnerability.findOne({
                     vtid: req.body.vtid,
                 });
                 if (!editableVulnerability) {
-                    return res.status(400).json({
-                        status: "failed",
-                        error: "novuln",
-                    });
+                    return helpers.sendStyledJSONErr(
+                        res,
+                        {
+                            msg:
+                                "A vulnerability matching the supplied VTID wasn't found.",
+                            type: "notFound",
+                        },
+                        400
+                    );
                 }
 
                 if (req.body.deletionQueue) {
@@ -297,7 +371,7 @@ router.post(
                 }
 
                 if (errors.length > 0) {
-                    return helpers.sendStyledJSONErr(res, errors);
+                    return helpers.sendStyledJSONErr(res, errors, 400);
                 }
 
                 if (fileDBEntries.length > 0) {
@@ -305,7 +379,12 @@ router.post(
                     for (entry of fileDBEntries) {
                         for (existingEntry of editableVulnerability.attachments) {
                             if (existingEntry.name == entry.name) {
-                                editableVulnerability.attachments.splice(editableVulnerability.attachments.indexOf(existingEntry), 1);
+                                editableVulnerability.attachments.splice(
+                                    editableVulnerability.attachments.indexOf(
+                                        existingEntry
+                                    ),
+                                    1
+                                );
                             }
                         }
                     }
@@ -326,12 +405,19 @@ router.post(
                     editableVulnerability.bounty = req.body.bountyAmount || 0;
                     editableVulnerability.public = public;
                     await editableVulnerability.save();
-                    return res.json({ status: "success" });
+                    return res.json({
+                        status: "success",
+                    });
                 }
-                return res.status(403).json({
-                    status: "failed",
-                    error: "nopermission",
-                });
+                return helpers.sendStyledJSONErr(
+                    res,
+                    {
+                        msg:
+                            "You do not have permission to modify this vulnerability.",
+                        type: "fordidden",
+                    },
+                    403
+                );
         }
     }
 );
@@ -339,34 +425,63 @@ router.post(
 // Delete Vulnerabity (processing)
 router.delete("/delete", helpers.isLoggedIn, async (req, res) => {
     if (!req.body.vtid) {
-        return res.status(400).json({
-            status: "failed",
-            error: "novtid",
-        });
+        return helpers.sendStyledJSONErr(
+            res,
+            [
+                {
+                    msg: "There was no VTID specified.",
+                    type: "noVTID",
+                },
+            ],
+            400
+        );
     }
-    let vuln = await Vulnerability.findOne({
-        vtid: req.body.vtid,
-    }, 'author vtid');
+    let vuln = await Vulnerability.findOne(
+        {
+            vtid: req.body.vtid,
+        },
+        "author vtid"
+    );
     if (!vuln) {
-        return res.status(400).json({
-            status: "failed",
-            error: "notfound",
-        });
+        return helpers.sendStyledJSONErr(
+            res,
+            [
+                {
+                    msg:
+                        "A vulnerability matching the supplied VTID wasn't found.",
+                    type: "notFound",
+                },
+            ],
+            400
+        );
     }
     if (vuln.author != req.session.user) {
-        return res.status(403).json({
-            status: "failed",
-            error: "forbidden",
-        });
+        return helpers.sendStyledJSONErr(
+            res,
+            [
+                {
+                    msg:
+                        "You do not have permission to modify this vulnerability.",
+                    type: "fordidden",
+                },
+            ],
+            403
+        );
     }
 
     // TODO: Fix vuln folder deletion on vuln deletion
     fs.access(`files/${vuln.vtid}/`, (err) => {
         console.log(err);
         if (!err) {
-            fs.rmdir(`files/${vuln.vtid}`, { recursive: true }, (err) => {
-                console.log(err);
-            });
+            fs.rmdir(
+                `files/${vuln.vtid}`,
+                {
+                    recursive: true,
+                },
+                (err) => {
+                    console.log(err);
+                }
+            );
         }
     });
     await vuln.delete();
@@ -375,25 +490,38 @@ router.delete("/delete", helpers.isLoggedIn, async (req, res) => {
     });
 });
 
-/*  Return Vulnerability details as JSON (processing)
-
-    We need this because we use AJAX to get the vulnerability description
-    We could use inline scripts in the Pug template but it's hacky and ugly */
+// Return Vulnerability description as JSON
 router.post("/data", async (req, res) => {
     if (!req.body.vtid) {
-        return res.status(400).json({
-            status: "failed",
-            error: "emptyvtid",
-        });
+        return helpers.sendStyledJSONErr(
+            res,
+            [
+                {
+                    msg: "There was no VTID specified.",
+                    type: "noVTID",
+                },
+            ],
+            400
+        );
     }
-    let vuln = await Vulnerability.findOne({
-        vtid: req.body.vtid,
-    }, 'author description public').lean();
+    let vuln = await Vulnerability.findOne(
+        {
+            vtid: req.body.vtid,
+        },
+        "author description public tokens"
+    ).lean();
     if (!vuln) {
-        return res.status(400).json({
-            status: "failed",
-            error: "novuln",
-        });
+        return helpers.sendStyledJSONErr(
+            res,
+            [
+                {
+                    msg:
+                        "A vulnerability matching the supplied VTID wasn't found.",
+                    type: "notFound",
+                },
+            ],
+            400
+        );
     }
     if (vuln.author == req.session.user || vuln.public) {
         return res.json({
@@ -401,10 +529,215 @@ router.post("/data", async (req, res) => {
             vuln: vuln,
         });
     }
-    return res.status(403).json({
-        status: "failed",
-        error: "nopermission",
-    });
+    if (req.body.token && !vuln.public) {
+        if (await helpers.tokenValid(vuln, req.body.token)) {
+            return res.json({
+                status: "success",
+                vuln: vuln,
+            });
+        }
+    }
+    return helpers.sendStyledJSONErr(
+        res,
+        [
+            {
+                msg: "You do not have permission to view this vulnerability.",
+                type: "fordidden",
+            },
+        ],
+        403
+    );
 });
+
+// Share routes
+router.get("/share/:vtid", async (req, res) => {
+    let vuln = await Vulnerability.findOne(
+        {
+            vtid: req.params.vtid,
+        },
+        "vtid author public tokens"
+    ).lean();
+    if (vuln) {
+        if (!vuln.author == req.session.user) {
+            return helpers.sendError(res, 403);
+        }
+        if (vuln.public) {
+            return helpers.sendError(res, 400);
+        }
+        return res.render("vuln/vuln-share", {
+            vuln,
+        });
+    }
+    return helpers.sendError(res, 400);
+});
+
+router.post(
+    "/share/createToken",
+    [
+        body("vtid").exists().withMessage({
+            text: "There was no VTID specified.",
+            type: "noVTID",
+        }),
+        body("expiryDate").exists().withMessage({
+            text: "There was no token expiry date specified.",
+            type: "noTokenExpDate",
+        }),
+        // TODO: Fix check
+        /*.isDate()
+            .withMessage({
+                text: "The expiry date specified was not a valid date.",
+                type: "invalidTokenExpDate",
+            }),*/
+    ],
+    async (req, res) => {
+        let errors = [];
+        const validationErrors = validationResult(req);
+        if (!validationErrors.isEmpty()) {
+            errors = validationErrors.array();
+        }
+        if (errors.length > 0) {
+            return helpers.sendStyledJSONErr(res, errors, 400);
+        }
+        let vuln = await Vulnerability.findOne(
+            {
+                vtid: req.body.vtid,
+            },
+            "author vtid tokens public"
+        );
+        if (!vuln) {
+            return helpers.sendStyledJSONErr(
+                res,
+                [
+                    {
+                        msg:
+                            "A vulnerability with the specified VTID couldn't be found.",
+                        type: "vulnnotfound",
+                    },
+                ],
+                400
+            );
+        }
+        if (vuln.author != req.session.user) {
+            return helpers.sendStyledJSONErr(
+                res,
+                [
+                    {
+                        msg: "You do not have access to this resource.",
+                        type: "forbidden",
+                    },
+                ],
+                403
+            );
+        }
+        if (vuln.public) {
+            return helpers.sendStyledJSONErr(
+                res,
+                [
+                    {
+                        msg:
+                            "You cannot generate tokens for a public discovery.",
+                        type: "vulnnotprivate",
+                    },
+                ],
+                400
+            );
+        }
+        let newToken = { code: crypto.randomBytes(5).toString("hex"), expiryDate: req.body.expiryDate, creationDate: Date.now()}
+        vuln.tokens.push(newToken);
+        await vuln.save();
+        return res.json({
+            status: "success",
+            token: newToken,
+        });
+    }
+);
+
+router.post(
+    "/share/deleteToken",
+    [
+        body("vtid").exists().withMessage({
+            text: "There was no VTID specified.",
+            type: "noVTID",
+        }),
+        body("token").exists().withMessage({
+            text: "There was no token specified for deletion.",
+            type: "noToken",
+        }),
+    ],
+    async (req, res) => {
+        let errors = [];
+        const validationErrors = validationResult(req);
+        if (!validationErrors.isEmpty()) {
+            errors = validationErrors.array();
+        }
+        if (errors.length > 0) {
+            return helpers.sendStyledJSONErr(res, errors, 400);
+        }
+        let vuln = await Vulnerability.findOne(
+            {
+                vtid: req.body.vtid,
+            },
+            "author vtid tokens public"
+        );
+        if (!vuln) {
+            return helpers.sendStyledJSONErr(
+                res,
+                [
+                    {
+                        msg:
+                            "A vulnerability with the specified VTID couldn't be found",
+                        type: "vulnnotfound",
+                    },
+                ],
+                400
+            );
+        }
+        if (vuln.author != req.session.user) {
+            return helpers.sendStyledJSONErr(
+                res,
+                [
+                    {
+                        msg: "You do not have access to this resource.",
+                        type: "forbidden",
+                    },
+                ],
+                403
+            );
+        }
+        if (vuln.public) {
+            return helpers.sendStyledJSONErr(
+                res,
+                [
+                    {
+                        msg:
+                            "Token management is not available for public vulnerabilities.",
+                        type: "vulnnotprivate",
+                    },
+                ],
+                400
+            );
+        }
+
+        let l = vuln.tokens.length;
+        vuln.tokens = vuln.tokens.filter((v) => v.code != req.body.token);
+        if (vuln.tokens.length < l) {
+            await vuln.save();
+            return res.json({
+                status: "success",
+            });
+        } else {
+            return helpers.sendStyledJSONErr(
+                res,
+                [
+                    {
+                        msg: "No matching entry found for the specified token.",
+                        type: "tokennotfound",
+                    },
+                ],
+                400
+            );
+        }
+    }
+);
 
 module.exports = router;

@@ -1,7 +1,10 @@
 // Imports
 const express = require("express"),
     router = express.Router(),
-    { body, validationResult } = require("express-validator"),
+    {
+        body,
+        validationResult
+    } = require("express-validator"),
     bcrypt = require("bcrypt");
 
 // Global vars
@@ -38,29 +41,27 @@ router.post("/login", async (req, res) => {
         return res.redirect("vuln");
     }
     let user = await User.findOne({
-        email: req.body.email,
-    }, 'password _id');
+            email: req.body.email,
+        },
+        "password _id"
+    );
     if (!user) {
         return res.render("login", {
-            msgs: [
-                {
-                    noteType: "note-danger",
-                    pretext: "Error",
-                    value: "The credentials specified were invalid",
-                },
-            ],
+            msgs: [{
+                noteType: "note-danger",
+                pretext: "Error",
+                value: "The credentials specified were invalid",
+            }, ],
         });
     }
     bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (err) {
             return res.render("login", {
-                msgs: [
-                    {
-                        noteType: "note-danger",
-                        pretext: "Error",
-                        value: "There was a server error",
-                    },
-                ],
+                msgs: [{
+                    noteType: "note-danger",
+                    pretext: "Error",
+                    value: "There was a server error",
+                }, ],
             });
         }
         if (result == true) {
@@ -68,13 +69,11 @@ router.post("/login", async (req, res) => {
             return res.redirect("/vuln");
         }
         return res.render("login", {
-            msgs: [
-                {
-                    noteType: "note-danger",
-                    pretext: "Error",
-                    value: "The credentials specified were invalid",
-                },
-            ],
+            msgs: [{
+                noteType: "note-danger",
+                pretext: "Error",
+                value: "The credentials specified were invalid",
+            }, ],
         });
     });
 });
@@ -87,83 +86,134 @@ router.get("/register", (req, res) => {
 });
 
 router.post(
-    "/register", (req, res, next) => {
+    "/register",
+    (req, res, next) => {
         if (req.session.user) {
-            return res.redirect('/vuln');
+            return res.redirect("/vuln");
         }
         next();
     },
     [
         body("email")
-            .exists()
-            .withMessage("There was no email specified.")
-            .isEmail()
-            .withMessage("The email specified was invalid.")
-            .isLength({ min: 5, max: 48 })
-            .withMessage(
-                "The email specified didn't match the desired length (5-48 Characters)"
-            )
-            .normalizeEmail()
-            .custom((value, { req }) => {
-                return new Promise((resolve, reject) => {
-                    User.findOne({ email: req.body.email }, (err, user) => {
+        .exists()
+        .withMessage({
+            text: "There was no email specified.",
+            type: "noEmail"
+        })
+        .isEmail()
+        .withMessage({
+            text: "The email specified was invalid.",
+            type: "invalidEmail"
+        })
+        .isLength({
+            min: 5,
+            max: 48
+        })
+        .withMessage({
+            text: "The email specified didn't match the desired length (5-48 Characters)",
+            type: "usernameCharLimitMismatch"
+        })
+        .normalizeEmail()
+        .custom((value, {
+            req
+        }) => {
+            return new Promise((resolve, reject) => {
+                User.findOne({
+                    email: req.body.email
+                }, (err, user) => {
+                    if (err) {
+                        reject(new Error({
+                            text: "Server Error.",
+                            type: "serverError"
+                        }));
+                    }
+                    if (Boolean(user)) {
+                        reject(new Error({
+                            text: "The specified email is already in use.",
+                            type: "emailInUse"
+                        }));
+                    }
+                    resolve(true);
+                });
+            });
+        }),
+        body("username")
+        .exists()
+        .withMessage({
+            text: "There was no username specified.",
+            type: "noUsername"
+        })
+        .isAlphanumeric()
+        .withMessage({
+            text: "The username specified was not alphanumeric.",
+            type: "usernameNotAlphanumeric"
+        })
+        .isLength({
+            min: 3,
+            max: 16
+        })
+        .withMessage({
+            text: "The username specified didn't match the desired length (3-16 Characters)",
+            type: "usernameCharLimitMismatch"
+        })
+        .escape()
+        .custom((value, {
+            req
+        }) => {
+            return new Promise((resolve, reject) => {
+                User.findOne({
+                        username: req.body.username
+                    },
+                    (err, user) => {
                         if (err) {
-                            reject(new Error("Server Error."));
+                            reject(new Error({
+                                text: "Server Error.",
+                                type: "serverError"
+                            }));
                         }
                         if (Boolean(user)) {
-                            reject(new Error("E-mail already in use."));
+                            reject(new Error({
+                                text: "The specified username is already in use.",
+                                type: "usernameInUse"
+                            }));
                         }
                         resolve(true);
-                    });
-                });
-            }),
-        body("username")
-            .exists()
-            .withMessage("There was no username specified.")
-            .isAlphanumeric()
-            .withMessage("The username specified was not alphanumeric.")
-            .isLength({ min: 3, max: 16 })
-            .withMessage(
-                "The username specified didn't match the desired length (3-16 Characters)"
-            )
-            .escape()
-            .custom((value, { req }) => {
-                return new Promise((resolve, reject) => {
-                    User.findOne(
-                        { username: req.body.username },
-                        (err, user) => {
-                            if (err) {
-                                reject(new Error("Server Error."));
-                            }
-                            if (Boolean(user)) {
-                                reject(new Error("Username already in use."));
-                            }
-                            resolve(true);
-                        }
-                    );
-                });
-            }),
+                    }
+                );
+            });
+        }),
         body("password")
-            .exists()
-            .withMessage("There was no password specified.")
-            .isLength({ min: 5, max: 128 })
-            .withMessage(
-                "The password specified didn't match the desired length (5-128 Characters)"
-            ),
+        .exists()
+        .withMessage("There was no password specified.")
+        .isLength({
+            min: 5,
+            max: 128
+        })
+        .withMessage({
+            text: "The password specified didn't match the desired length (5-128 Characters)",
+            type: "affectedProductCharLimitMismatch",
+        }),
         body("passwordVerify")
-            .exists()
-            .withMessage("No password was specified in the repetition field.")
-            .custom((value, { req }) => value === req.body.password)
-            .withMessage("The passwords specified didn't match."),
-        body("tosBox")
-            .exists()
-            .withMessage(
-                "You must accept the Terms and Conditions to register."
-            ),
+        .exists()
+        .withMessage({
+            text: "No password was specified in the confirmation field.",
+            type: "noPasswordConfirmation"
+        })
+        .custom((value, {
+            req
+        }) => value === req.body.password)
+        .withMessage({
+            text: "The passwords specified didn't match.",
+            type: "passwordMismatch",
+        }),
+        body("tosBox").exists().withMessage({
+            text: "You must accept the Terms and Conditions to register.",
+            type: "tosAgreementMissing",
+        }),
     ],
     async (req, res) => {
         if (req.session.user) {
-            res.redirect('/vuln');
+            res.redirect("/vuln");
         }
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {
@@ -172,10 +222,12 @@ router.post(
                 errList.push({
                     noteType: "note-danger",
                     pretext: "Error",
-                    value: err.msg,
+                    value: err.msg.text,
                 });
             }
-            return res.render("register", { msgs: errList });
+            return res.render("register", {
+                msgs: errList
+            });
         }
         try {
             req.body.password = await bcrypt.hash(
@@ -202,8 +254,7 @@ router.post(
         req.flash("msgs", {
             noteType: "note-success",
             pretext: "Success",
-            value:
-                "You've registred successfully. Now you can proceed to the login.",
+            value: "You've registred successfully. Now you can proceed to the login.",
         });
         res.redirect("/login");
     }
@@ -214,24 +265,20 @@ router.get("/logout", (req, res) => {
         // Since we rely on the session when it comes to flash messages
         // We wait a second before invalidating the session
         req.session.user = "";
-        req.flash("msgs", [
-            {
-                noteType: "note-info",
-                pretext: "Info",
-                value: "Logged out successfully",
-            },
-        ]);
+        req.flash("msgs", [{
+            noteType: "note-info",
+            pretext: "Info",
+            value: "Logged out successfully",
+        }, ]);
         setTimeout(() => {
             req.session.destroy();
         }, 1000);
     } else {
-        req.flash("msgs", [
-            {
-                noteType: "note-danger",
-                pretext: "Error",
-                value: "You need to be logged-in to log-out.",
-            },
-        ]);
+        req.flash("msgs", [{
+            noteType: "note-danger",
+            pretext: "Error",
+            value: "You need to be logged-in to log-out.",
+        }, ]);
     }
     res.redirect("/login");
 });

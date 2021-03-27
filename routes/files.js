@@ -10,13 +10,20 @@ const express = require('express'),
 router.use('/:vtid/:file', async (req, res, next) => {
     let vuln = await Vulnerability.findOne({
         vtid: req.params.vtid
-    }, 'author public').lean();
+    }, 'author public tokens').lean();
     if (!vuln) {
         return helpers.sendError(res, 400);
     }
     if (vuln.author != req.session.user) {
         if (!vuln.public) {
-            return helpers.sendError(res, 403);
+            if (req.query.token) {
+                if (!await helpers.tokenValid(vuln, req.query.token)) {
+                    console.log('Whoops, token check on file dl failed.')
+                    return helpers.sendError(res, 403);
+                }
+            } else {
+                return helpers.sendError(res, 403);
+            }
         }
     }
     next();

@@ -1,0 +1,41 @@
+extends ../base.pug
+
+block headblock
+    - var title = 'Share Center'
+
+block content
+    .container-fluid.justify-content-center.mt-3
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary.color-brown.mb-3
+                h1#scHeader(vtid=vuln.vtid) Share Center - #{vuln.vtid}
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.color-brown
+                    .row.mb-3
+                        h2.border-bottom.border-primary Add Token
+                        label(for="expiryDatePicker") Expiration Date
+                        .col-xl-5
+                            input.color-white.bg-primary.rounded.mb-2(type="datetime-local" name="expiryDate" id="expiryDatePicker")
+                            br
+                            button#addTokenBtn.btn.btn-primary Add
+                    .row
+                        h2.border-bottom.border-primary Tokens
+                        .table-responsive
+                            table.table.table-striped.table-bordered.vulnTable
+                                thead.bg-lbrown.color-white.rounded-top
+                                    tr
+                                        th(scope="col") Token
+                                        th(scope="col") Creation Date
+                                        th(scope="col") Expiration Date
+                                        th(scope="col") Time Left
+                                        th(scope="col") Actions
+                                tbody
+                                    each token in vuln.tokens || []
+                                        tr
+                                            td.tokenCol
+                                                a.token(href='/vuln/id/' + vuln.vtid + '?token=' + token.code) #{token.code}
+                                            td.tokenCreationDate #{token.creationDate}
+                                            td.tokenExpiryDate #{token.expiryDate}
+                                            td.tokenTimeLeft Time Left
+                                            td(style='padding: 0; padding-top: 1rem;')
+                                                .d-flex.justify-content-center.mx-1(style='font-size: 1.3em')
+                                                        a(href='#' alt='Delete')
+                                                            i.delTokenBtn.fa.fa-trash(vtid=vuln.vtid)

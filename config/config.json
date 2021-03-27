@@ -1,6 +1,6 @@
 {
-    "version": "0.1.0",
-    "versionCode": "White Grizzly",
+    "version": "0.2.0",
+    "versionCode": "Silver Swan",
     "port": 80,
     "session": {
         "connection": "mongodb://localhost/VulnerabiliTea",

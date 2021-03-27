@@ -34,9 +34,11 @@ mixin vulnTable(vulns)
                         td.dateReportedCol #{vuln.dateReported}
                         if ownEntries
                             td(style='padding: 0; padding-top: 1rem;')
-                                .d-flex.justify-content-center
-                                    .mx-1(style='font-size: 1.3em')
+                                .d-flex.justify-content-center.mx-1(style='font-size: 1.3em')
                                         a(href='/vuln/edit/' + vuln.vtid alt='Edit')
-                                            i.fa.fa-edit.float-end
+                                            i.mx-1.fa.fa-edit
                                         a(href='#' alt='Delete')
-                                            i.vulnDeleteBtn.mx-2.fa.fa-trash(vtid=vuln.vtid)
+                                            i.vulnDeleteBtn.mx-1.fa.fa-trash(vtid=vuln.vtid)
+                                        if !vuln.public
+                                            a(href='/vuln/share/' + vuln.vtid alt='Share')
+                                                i.mx-1.fa.fa-share(vtid=vuln.vtid)

@@ -55,6 +55,18 @@ function isScrolledIntoView(elem) {
     return elemBottom <= docViewBottom && elemTop >= docViewTop;
 }
 
+function renderError(elem, errs) {
+    $(elem).empty();
+    for (err of errs) {
+        console.log(
+            `<p class='note ${err.noteType}'><strong>${err.pretext}</strong>: ${err.value}</p>`
+        );
+        $(elem).append(
+            `<p class='note ${err.noteType}'><strong>${err.pretext}</strong>: ${err.value}</p>`
+        );
+    }
+}
+
 function colorizeCVSS() {
     $(".cvssScore").each((i, obj) => {
         let val = Number($(obj).text());
@@ -71,300 +83,389 @@ function colorizeCVSS() {
 }
 
 let entityMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-    '/': '&#x2F;',
-    '`': '&#x60;',
-    '=': '&#x3D;'
-  };
-  
-function escapeHtml (string) {
-  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
-    return entityMap[s];
-  });
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+    "/": "&#x2F;",
+    "`": "&#x60;",
+    "=": "&#x3D;",
+};
+
+function escapeHtml(string) {
+    return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+        return entityMap[s];
+    });
 }
 
 // Initialize Trumbowyg
-    if ($(".trumbowyg").length) {
-        $.trumbowyg.svgPath = "/res/trumbowyg/icos/icons.svg";
-        $(".trumbowyg").trumbowyg({
-            btns: [
-                ["viewHTML"],
-                ["undo", "redo"], // Only supported in Blink browsers
-                ["formatting"],
-                ["strong", "em", "del"],
-                ["fontsize", "fontfamily"],
-                ["foreColor", "backColor"],
-                ["superscript", "subscript"],
-                ["link"],
-                ["insertImage"],
-                ["justifyLeft", "justifyCenter", "justifyRight", "justifyFull"],
-                ["unorderedList", "orderedList"],
-                ["horizontalRule"],
-                ["removeformat"],
-                ["fullscreen"],
-                ["indent", "outdent"],
-                ["table"],
-            ],
-        });
+if ($(".trumbowyg").length) {
+    $.trumbowyg.svgPath = "/res/trumbowyg/icos/icons.svg";
+    $(".trumbowyg").trumbowyg({
+        btns: [
+            ["viewHTML"],
+            ["undo", "redo"], // Only supported in Blink browsers
+            ["formatting"],
+            ["strong", "em", "del"],
+            ["fontsize", "fontfamily"],
+            ["foreColor", "backColor"],
+            ["superscript", "subscript"],
+            ["link"],
+            ["insertImage"],
+            ["justifyLeft", "justifyCenter", "justifyRight", "justifyFull"],
+            ["unorderedList", "orderedList"],
+            ["horizontalRule"],
+            ["removeformat"],
+            ["fullscreen"],
+            ["indent", "outdent"],
+            ["table"],
+        ],
+    });
+}
+
+// Handle attachment deletion queue
+let toBeDeletedAttachments = [];
+$(".deleteAttachmentBtn").click(function () {
+    let attachmentName = $(this)
+        .closest(".attachmentEntry")
+        .find(".attachmentTitle")
+        .first()
+        .text();
+    console.log($(this).closest("p"));
+    if (!toBeDeletedAttachments.includes(attachmentName)) {
+        toBeDeletedAttachments.push(attachmentName);
+        $(this).removeClass("fa-times-circle");
+        $(this).addClass("fa-trash");
+        $(this)
+            .closest(".attachmentEntry")
+            .find(".attachmentTitle")
+            .first()
+            .addClass("strikethrough");
+    } else {
+        toBeDeletedAttachments.splice(
+            toBeDeletedAttachments.indexOf(attachmentName),
+            1
+        );
+        $(this).addClass("fa-times-circle");
+        $(this).removeClass("fa-trash");
+        $(this)
+            .closest(".attachmentEntry")
+            .find(".attachmentTitle")
+            .first()
+            .removeClass("strikethrough");
+    }
+    console.log(
+        "Array: " + toBeDeletedAttachments + "\nName: " + attachmentName
+    );
+});
+
+// Handle editing and creating new vulnerabilities
+$("#vulnForm").submit((e) => {
+    let actionUrl = $("#vulnForm").attr("action");
+    e.preventDefault();
+    let fData = new FormData($("#vulnForm")[0]);
+    let modeVerb = "added";
+    if (actionUrl.includes("edit")) {
+        fData.append("vtid", $("#vulnEditHeader").attr("vtid"));
+        modeVerb = "modified";
+    }
+    fData.append("description", $(".trumbowyg-editor").html());
+    if (toBeDeletedAttachments.length > 0) {
+        fData.append("deletionQueue", JSON.stringify(toBeDeletedAttachments));
     }
 
-    // Handle attachment deletion queue
-    let toBeDeletedAttachments = [];
-    $(".deleteAttachmentBtn").click(function() {
-            let attachmentName = $(this).closest(".attachmentEntry").find('.attachmentTitle').first().text();
-            console.log($(this).closest('p'));
-            if (!toBeDeletedAttachments.includes(attachmentName)) {
-                toBeDeletedAttachments.push(attachmentName);
-                $(this).removeClass('fa-times-circle');
-                $(this).addClass('fa-trash');
-                $(this).closest(".attachmentEntry").find('.attachmentTitle').first().addClass('strikethrough');
-            } else {
-                toBeDeletedAttachments.splice(toBeDeletedAttachments.indexOf(attachmentName), 1);
-                $(this).addClass('fa-times-circle');
-                $(this).removeClass('fa-trash');
-                $(this).closest(".attachmentEntry").find('.attachmentTitle').first().removeClass('strikethrough');
-            }
-            console.log('Array: ' + toBeDeletedAttachments + '\nName: ' + attachmentName);
-    });
-
-    // Handle editing and creating new vulnerabilities
-    $("#vulnForm").submit((e) => {
-        let actionUrl = $("#vulnForm").attr("action");
-        e.preventDefault();
-        let fData = new FormData($("#vulnForm")[0]);
-        let modeVerb = "added";
-        if (actionUrl.includes("edit")) {
-            fData.append("vtid", $("#vulnEditHeader").attr("vtid"));
-            modeVerb = "modified";
-        }
-        fData.append("description", $(".trumbowyg-editor").html());
-        if (toBeDeletedAttachments.length > 0) {
-            fData.append("deletionQueue", JSON.stringify(toBeDeletedAttachments));
-        }
-
-        $.ajax({
-            type: "POST",
-            url: actionUrl,
-            data: fData,
-            processData: false,
-            contentType: false,
-            success: (res) => {
-                if (res.status == "success") {
-                    $("#infoDiv").empty();
-                    $("#infoDiv").append(`
+    $.ajax({
+        type: "POST",
+        url: actionUrl,
+        data: fData,
+        processData: false,
+        contentType: false,
+        success: (res) => {
+            if (res.status == "success") {
+                $("#infoDiv").empty();
+                $("#infoDiv").append(`
                     <div class='text-dark my-2 mx-1 note note-success'>
                         <strong>Success</strong>
                         Vulnerability ${modeVerb} successfully. Redirecting in 3 seconds...
                     </div>`);
-                    setTimeout(() => {
-                        window.location.href = "/vuln";
-                    }, 3000);
-                } else {
-                    $("#infoDiv").empty();
-                    for (msg of res.msgs) {
-                        $("#infoDiv").append(`
-                            <div class='text-dark my-2 mx-1 note ${msg.noteType}'>
-                                <strong>${msg.pretext}</strong>
-                                ${msg.value}
-                            </div>`);
-                    }
-                    $("#infoDiv")[0].scrollIntoView();
-                }
-            },
-            error: (res, err) => {
-                if (res.status == 413) {
-                    $("#infoDiv").empty();
-                    $("#infoDiv").append(`
+                setTimeout(() => {
+                    window.location.href = "/vuln";
+                }, 3000);
+            }
+        },
+        error: (res, err) => {
+            if (res.status == 413) {
+                $("#infoDiv").empty();
+                $("#infoDiv").append(`
                     <div class='text-dark my-2 mx-1 note note-danger'>
                         <strong>Error </strong>
                         You've reached the upload limit.
                     </div>`);
-                }
-            },
-        });
+            } else {
+                renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
+                $("#infoDiv")[0].scrollIntoView();
+            }
+        },
     });
+});
 
-    colorizeCVSS();
+colorizeCVSS();
 
-    $(".status").each((i, obj) => {
-        let statusStr = $(obj).text();
-        if (statusStr.includes("Patched")) {
-            $(obj).addClass("text-success");
-        } else if (statusStr.includes("Reported")) {
-            $(obj).addClass("text-warning");
-        } else if (statusStr.includes("Unpatched")) {
-            $(obj).addClass("text-danger");
-        }
-    });
-
-    $(".dateReported").each((i, obj) => {
-        $(obj).text(new Date($(obj).text()).toUTCString());
-    });
-
-    $(".regDate").each((i, obj) => {
-        $(obj).html(
-            "<p><strong>Registration Date: </strong>" +
-                new Date($(obj).text()).toUTCString() +
-                "</p>"
-        );
-    });
-
-    if ($("#vulnDescriptionTab").length) {
-        let localVtid = $("#vulnOverviewHeader").attr("vtid");
-        console.log("VTID: " + localVtid);
-        $.ajax({
-            type: "POST",
-            url: "/vuln/data",
-            data: JSON.stringify({ vtid: localVtid }),
-            processData: false,
-            contentType: "application/json",
-            success: (res) => {
-                console.log(res);
-                if (!res.err) {
-                    $("#vulnDescriptionTab").append(
-                        DOMPurify.sanitize(res.vuln.description)
-                    );
-                }
-            },
-            error: (res, err) => {
-                console.log(err);
-                console.log(res.err);
-            },
-        });
+$(".status").each((i, obj) => {
+    let statusStr = $(obj).text();
+    if (statusStr.includes("Patched")) {
+        $(obj).addClass("text-success");
+    } else if (statusStr.includes("Reported")) {
+        $(obj).addClass("text-warning");
+    } else if (statusStr.includes("Unpatched")) {
+        $(obj).addClass("text-danger");
     }
+});
 
-    /* This applies values the droptowns too, but I don't want to 
+$(".dateReported").each((i, obj) => {
+    $(obj).text(new Date($(obj).text()).toUTCString());
+});
+
+$(".regDate").each((i, obj) => {
+    $(obj).html(
+        "<p><strong>Registration Date: </strong>" +
+            new Date($(obj).text()).toUTCString() +
+            "</p>"
+    );
+});
+
+if ($("#vulnDescriptionTab").length) {
+    let localVtid = $("#vulnOverviewHeader").attr("vtid");
+    const searchParams = new URLSearchParams(window.location.search);
+    console.log("VTID: " + localVtid);
+    $.ajax({
+        type: "POST",
+        url: "/vuln/data",
+        data: JSON.stringify(searchParams.has('token') ? { vtid: localVtid, token: searchParams.get('token') } : { vtid: localVtid }),
+        processData: false,
+        contentType: "application/json",
+        success: (res) => {
+            console.log(res);
+            if (!res.err) {
+                $("#vulnDescriptionTab").append(
+                    DOMPurify.sanitize(res.vuln.description)
+                );
+            }
+        },
+        error: (res, err) => {
+            renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
+            $("#infoDiv")[0].scrollIntoView();
+            //console.log(err);
+            //console.log(res.err);
+        },
+    });
+}
+
+/* This applies values the droptowns too, but I don't want to 
        make 2 separate ifs because it's long and ugly */
-    if ($("#vulnDescEdit").length) {
-        let localVtid = $("#vulnEditHeader").attr("vtid");
-        console.log("VTID: " + localVtid);
-        $.ajax({
-            type: "POST",
-            url: "/vuln/data",
-            data: JSON.stringify({ vtid: localVtid }),
-            processData: false,
-            contentType: "application/json",
-            success: (res) => {
-                console.log(res);
-                if (!res.err) {
-                    $("#vulnDescEdit").append(
-                        DOMPurify.sanitize(res.vuln.description)
-                    );
-                    $(`select option[value='${res.vuln.type}']`).attr(
-                        "selected",
-                        "selected"
-                    );
-                    $(`select option[value='${res.vuln.status}']`).attr(
-                        "selected",
-                        "selected"
-                    );
-                    $("#publicBox").prop("checked", res.vuln.public);
-                }
-            },
-            error: (res, err) => {
-                console.log(err);
-                console.log(res.err);
-            },
-        });
-    }
+if ($("#vulnDescEdit").length) {
+    let localVtid = $("#vulnEditHeader").attr("vtid");
+    console.log("VTID: " + localVtid);
+    $.ajax({
+        type: "POST",
+        url: "/vuln/data",
+        data: JSON.stringify({ vtid: localVtid }),
+        processData: false,
+        contentType: "application/json",
+        success: (res) => {
+            console.log(res);
+            if (!res.err) {
+                $("#vulnDescEdit").append(
+                    DOMPurify.sanitize(res.vuln.description)
+                );
+                $(`select option[value='${res.vuln.type}']`).attr(
+                    "selected",
+                    "selected"
+                );
+                $(`select option[value='${res.vuln.status}']`).attr(
+                    "selected",
+                    "selected"
+                );
+                $("#publicBox").prop("checked", res.vuln.public);
+            }
+        },
+        error: (res, err) => {
+            renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
+            $("#infoDiv")[0].scrollIntoView();
+            //console.log(err);
+            //console.log(res.err);
+        },
+    });
+}
 
-    if ($(".vulnDeleteBtn").length) {
-        $(".vulnDeleteBtn").each((i, obj) => {
-            $(obj).click(() => {
-                $.ajax({
-                    type: "DELETE",
-                    url: "/vuln/delete",
-                    data: JSON.stringify({ vtid: $(obj).attr("vtid") }),
-                    processData: false,
-                    contentType: "application/json",
-                    success: (res) => {
-                        if (!res.err) {
-                            $(obj)
-                                .closest("tr")
-                                .fadeTo("fast", 0, () => {
-                                    $(obj).closest("tr").remove();
-                                });
-                        }
-                    },
-                    error: (res, err) => {
-                        console.log(err);
-                        console.log(res.err);
-                    },
-                });
+if ($(".vulnDeleteBtn").length) {
+    $(".vulnDeleteBtn").each((i, obj) => {
+        $(obj).click(() => {
+            $.ajax({
+                type: "DELETE",
+                url: "/vuln/delete",
+                data: JSON.stringify({ vtid: $(obj).attr("vtid") }),
+                processData: false,
+                contentType: "application/json",
+                success: (res) => {
+                    if (!res.err) {
+                        $(obj)
+                            .closest("tr")
+                            .fadeTo("fast", 0, () => {
+                                $(obj).closest("tr").remove();
+                            });
+                    }
+                },
+                error: (res, err) => {
+                    renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
+                    $("#infoDiv")[0].scrollIntoView();
+                    //console.log(err);
+                    //console.log(res.err);
+                },
             });
         });
+    });
+}
+
+if ($("#activityLoader").length) {
+    let activityLoader = $("#activityLoader");
+    let skipCounter = 0;
+    let listEndReached = false;
+
+    function appendVulnActivity(vuln) {
+        vuln.vtid = escapeHtml(vuln.vtid);
+        vuln.authorName = escapeHtml(vuln.authorName);
+        vuln.affectedProduct = escapeHtml(vuln.affectedProduct);
+        vuln.affectedFeature = escapeHtml(vuln.affectedFeature);
+        vuln.cvss = escapeHtml(vuln.cvss);
+        vuln.authorName = escapeHtml(vuln.authorName);
+
+        $("#vulnActivityCol").append(
+            `<div class="activityElement my-3 color-white"> <div class="d-flex flex-column float-start me-3 bg-primary rounded activitySection"><i class="fas fa-arrow-up mx-2 mt-2 upvoteArrow"></i> <p class="mx-2" style="margin: 0.3em;">${
+                vuln.communityScore || 0
+            }</p><i class="fas fa-arrow-down mx-2 downvoteArrow"></i> </div><div class="ms-5 bg-primary rounded"> <div class="ms-2 activitySection"> <div class="pb-1"></div><a class="color-white" href="/vuln/id/${
+                vuln.vtid
+            }"><h5 class="d-inline">${
+                vuln.vtid
+            }</h5></a><a class="color-white" href="user/profile/${
+                vuln.author
+            }"><h5 class="d-inline float-end me-2">${
+                vuln.authorName
+            }</h5></a><p class="mt-1">${vuln.affectedProduct} - ${
+                vuln.affectedFeature
+            } - ${vuln.type} (<strong class="cvssScore">${
+                vuln.cvss
+            }</strong>)</p></div></div></div>`
+        );
+        colorizeCVSS();
     }
 
-    if ($("#activityLoader").length) {
-        let activityLoader = $("#activityLoader");
-        let skipCounter = 0;
-        let listEndReached = false;
-
-        function appendVulnActivity(vuln) {
-            vuln.vtid = escapeHtml(vuln.vtid);
-            vuln.authorName = escapeHtml(vuln.authorName);
-            vuln.affectedProduct = escapeHtml(vuln.affectedProduct);
-            vuln.affectedFeature = escapeHtml(vuln.affectedFeature);
-            vuln.cvss = escapeHtml(vuln.cvss);
-            vuln.authorName = escapeHtml(vuln.authorName);
-
-            $("#vulnActivityCol").append(
-                `<div class="activityElement my-3 color-white"> <div class="d-flex flex-column float-start me-3 bg-primary rounded activitySection"><i class="fas fa-arrow-up mx-2 mt-2 upvoteArrow"></i> <p class="mx-2" style="margin: 0.3em;">${
-                    vuln.communityScore || 0
-                }</p><i class="fas fa-arrow-down mx-2 downvoteArrow"></i> </div><div class="ms-5 bg-primary rounded"> <div class="ms-2 activitySection"> <div class="pb-1"></div><a class="color-white" href="/vuln/id/${
-                    vuln.vtid
-                }"><h5 class="d-inline">${
-                    vuln.vtid
-                }</h5></a><a class="color-white" href="user/profile/${
-                    vuln.author
-                }"><h5 class="d-inline float-end me-2">${
-                    vuln.authorName
-                }</h5></a><p class="mt-1">${vuln.affectedProduct} - ${
-                    vuln.affectedFeature
-                } - ${vuln.type} (<strong class="cvssScore">${
-                    vuln.cvss
-                }</strong>)</p></div></div></div>`
-            );
-            colorizeCVSS();
-        }
-
-        function getNewActivityEntries() {
-            if (!listEndReached) {
-                $.ajax({
-                    type: "POST",
-                    url: "/activity/getActivity",
-                    data: JSON.stringify({ skipCount: skipCounter }),
-                    processData: false,
-                    contentType: "application/json",
-                    success: (res) => {
-                        if (!res.err) {
-                            for (vuln of res.vulns) {
-                                console.log(vuln);
-                                appendVulnActivity(vuln);
-                                skipCounter++;
-                            }
+    function getNewActivityEntries() {
+        if (!listEndReached) {
+            $.ajax({
+                type: "POST",
+                url: "/activity/getActivity",
+                data: JSON.stringify({ skipCount: skipCounter }),
+                processData: false,
+                contentType: "application/json",
+                success: (res) => {
+                    if (!res.err) {
+                        for (vuln of res.vulns) {
+                            console.log(vuln);
+                            appendVulnActivity(vuln);
+                            skipCounter++;
                         }
-                    },
-                    error: (res, err) => {
-                        console.log(err);
-                        console.log(res.err);
-                        if ((res.err = "endReached")) {
-                            listEndReached = true;
-                        }
-                    },
-                });
-            }
+                    }
+                },
+                error: (res, err) => {
+                    //console.log(err);
+                    //console.log(res.err);
+                    if ((res.err = "endReached")) {
+                        listEndReached = true;
+                    } else {
+                        renderError(
+                            $.find("#infoDiv")[0],
+                            res.responseJSON.msgs
+                        );
+                        $("#infoDiv")[0].scrollIntoView();
+                    }
+                },
+            });
         }
+    }
 
-        getNewActivityEntries();
+    getNewActivityEntries();
 
-        $(window).scroll(() => {
-            if (isScrolledIntoView(activityLoader)) {
-                getNewActivityEntries();
-            }
+    $(window).scroll(() => {
+        if (isScrolledIntoView(activityLoader)) {
+            getNewActivityEntries();
+        }
+    });
+}
+
+// Token Adding
+if ($("#expiryDatePicker").length) {
+    $("#expiryDatePicker").attr("min", new Date().toISOString().split(".")[0]);
+}
+if ($("#addTokenBtn").length) {
+    $("#addTokenBtn").click(() => {
+        $.ajax({
+            type: "POST",
+            url: "/vuln/share/createToken",
+            data: JSON.stringify({
+                vtid: $("#scHeader").attr("vtid"),
+                expiryDate: $("#expiryDatePicker").val(),
+            }),
+            processData: false,
+            contentType: "application/json",
+            success: (res) => {
+                if (!res.err) {
+                    console.log(res);
+                }
+            },
+            error: (res, err) => {
+                renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
+                $("#infoDiv")[0].scrollIntoView();
+            },
         });
-    }
+    });
+}
+
+// Token Deletion
+if ($(".delTokenBtn").length) {
+    $(".delTokenBtn").click(function () {
+        $.ajax({
+            type: "POST",
+            url: "/vuln/share/deleteToken",
+            data: JSON.stringify({
+                vtid: $("#scHeader").attr("vtid"),
+                token: $(this).closest('tr').find('.token').text()
+            }),
+            processData: false,
+            contentType: "application/json",
+            success: (res) => {
+                if (!res.err) {
+                    $(this)
+                        .closest("tr")
+                        .fadeTo("fast", 0, () => {
+                            $(this).closest("tr").remove();
+                        });
+                }
+            },
+            error: (res, err) => {
+                renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
+                $("#infoDiv")[0].scrollIntoView();
+            },
+        });
+    });
+}
+
+// Token Calculations
+if ($("#tokenCreationDate").length) {
+    $(".tokenCreationDate").each((i, obj) => {
+        let creationDate = $(obj).text();
+        let expiryDate = $(obj).parent().find(".tokenExpiryDate").text();
+        console.log(`TokenPair [${creationDate} - ${expiryDate}]`);
+    });
+}
