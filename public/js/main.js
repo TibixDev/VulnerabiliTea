@@ -420,9 +420,7 @@ if ($("#addTokenBtn").length) {
             processData: false,
             contentType: "application/json",
             success: (res) => {
-                if (!res.err) {
-                    console.log(res);
-                }
+                location.reload();
             },
             error: (res, err) => {
                 renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
@@ -461,11 +459,21 @@ if ($(".delTokenBtn").length) {
     });
 }
 
-// Token Calculations
-if ($("#tokenCreationDate").length) {
+// Token Timer Calculations
+if ($(".tokenCreationDate").length) {
     $(".tokenCreationDate").each((i, obj) => {
         let creationDate = $(obj).text();
         let expiryDate = $(obj).parent().find(".tokenExpiryDate").text();
+        let countdownObj = $(obj).parent().find(".tokenTimeLeft");
         console.log(`TokenPair [${creationDate} - ${expiryDate}]`);
+        $(countdownObj).attr('time', Date.parse(expiryDate) - Date.now());
+        setInterval(() => {
+            updateTimer(countdownObj);
+        }, 1000);
     });
+}
+
+function updateTimer(obj) {
+    $(obj).attr('time', $(obj).attr('time') - 1000);
+    $(obj).text(humanizeDuration($(obj).attr('time')));
 }
