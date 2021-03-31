@@ -66,7 +66,8 @@ router.get("/id/:vulnID", async (req, res) => {
         if (req.query.token && !vuln.public) {
             if (await helpers.tokenValid(vuln, req.query.token)) {
                 return res.render("vuln/vuln-view", {
-                    vuln, token: req.query.token
+                    vuln,
+                    token: req.query.token,
                 });
             }
         }
@@ -556,13 +557,25 @@ router.get("/share/:vtid", async (req, res) => {
             vtid: req.params.vtid,
         },
         "vtid author public tokens"
-    ).lean();
+    );
     if (vuln) {
         if (!vuln.author == req.session.user) {
             return helpers.sendError(res, 403);
         }
         if (vuln.public) {
             return helpers.sendError(res, 400);
+        }
+        let tokenDelCount = 0;
+        vuln.tokens.forEach((token, i) => {
+            console.log(`Token: ${token.code} [ExpDate: ${token.expiryDate.getTime()} | Now: ${Date.now()}]`);
+            if (token.expiryDate.getTime() < Date.now()) {
+                vuln.tokens.filter(t => t.code != token.code);
+                tokenDelCount++;
+            }
+        });
+        console.log('TokenDelCount: ' + tokenDelCount);
+        if (tokenDelCount > 0) {
+            vuln.save();
         }
         return res.render("vuln/vuln-share", {
             vuln,
@@ -642,7 +655,11 @@ router.post(
                 400
             );
         }
-        let newToken = { code: crypto.randomBytes(5).toString("hex"), expiryDate: req.body.expiryDate, creationDate: Date.now()}
+        let newToken = {
+            code: crypto.randomBytes(5).toString("hex"),
+            expiryDate: req.body.expiryDate,
+            creationDate: Date.now(),
+        };
         vuln.tokens.push(newToken);
         await vuln.save();
         return res.json({
@@ -665,6 +682,7 @@ router.post(
         }),
     ],
     async (req, res) => {
+        console.log(req.body.krunker_token);
         let errors = [];
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {

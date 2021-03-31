@@ -242,7 +242,11 @@ if ($("#vulnDescriptionTab").length) {
     $.ajax({
         type: "POST",
         url: "/vuln/data",
-        data: JSON.stringify(searchParams.has('token') ? { vtid: localVtid, token: searchParams.get('token') } : { vtid: localVtid }),
+        data: JSON.stringify(
+            searchParams.has("token")
+                ? { vtid: localVtid, token: searchParams.get("token") }
+                : { vtid: localVtid }
+        ),
         processData: false,
         contentType: "application/json",
         success: (res) => {
@@ -438,7 +442,7 @@ if ($(".delTokenBtn").length) {
             url: "/vuln/share/deleteToken",
             data: JSON.stringify({
                 vtid: $("#scHeader").attr("vtid"),
-                token: $(this).closest('tr').find('.token').text()
+                token: $(this).closest("tr").find(".token").text(),
             }),
             processData: false,
             contentType: "application/json",
@@ -474,6 +478,6 @@ if ($(".tokenCreationDate").length) {
 }
 
 function updateTimer(obj) {
-    $(obj).attr('time', $(obj).attr('time') - 1000);
-    $(obj).text(humanizeDuration($(obj).attr('time')));
+    $(obj).attr("time", $(obj).attr("time") - 1000);
+    $(obj).text(humanizeDuration($(obj).attr("time")));
 }

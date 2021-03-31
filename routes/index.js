@@ -111,7 +111,7 @@ router.post(
         })
         .withMessage({
             text: "The email specified didn't match the desired length (5-48 Characters)",
-            type: "usernameCharLimitMismatch"
+            type: "emailCharLimitMismatch"
         })
         .normalizeEmail()
         .custom((value, {
@@ -191,7 +191,7 @@ router.post(
         })
         .withMessage({
             text: "The password specified didn't match the desired length (5-128 Characters)",
-            type: "affectedProductCharLimitMismatch",
+            type: "passwordCharLimitMismatch",
         }),
         body("passwordVerify")
         .exists()
@@ -204,7 +204,7 @@ router.post(
         }) => value === req.body.password)
         .withMessage({
             text: "The passwords specified didn't match.",
-            type: "passwordMismatch",
+            type: "passwordVerifyMismatch",
         }),
         body("tosBox").exists().withMessage({
             text: "You must accept the Terms and Conditions to register.",
