@@ -8,7 +8,8 @@ VulnerabiliTea is a Free and Open-Source security vulnerability management webap
 + Attachments
 + Public and private discovery publishing
 + Editing after publishing
-+ Activity feed for public discoveries
++ Activity feed with vote system for public discoveries (WIP)
++ Token-generation based share center for private discoveries
 + User profiles
 
 ## Pre-Requisites
@@ -26,7 +27,7 @@ npm i
 Now you have two ways to deploy the webapp:
 1. Editing `config.json` manually and starting the webapp with `node app.js`
 2. Using environment variables   
-If you are using this method you will be required to set the `PORT` and `MONGODB_URI` variables before starting. This can be done like so:
+If you are using this method you will be required to set the `PORT` and `MONGODB_URI` environment variables before starting. This can be done like so:
 
     ```bash
     /* Linux */
@@ -38,7 +39,7 @@ If you are using this method you will be required to set the `PORT` and `MONGODB
     node app.js
     ```
 
-
+> If you want HTTPS you must also set the `ACME_URI` and `ACME_SERVE` environment variables
 
 
 ## Contributing

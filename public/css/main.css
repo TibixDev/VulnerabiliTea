@@ -243,7 +243,7 @@ header {
     background-color: white;
 }
 
-.vulnSubmitBtn {
+.vtSubmitBtn {
     width: 50%;
     height: 5rem;
     font-size: 1.3rem;
@@ -369,7 +369,7 @@ header {
     }
 
     /* Vuln CSS */
-    .vulnSubmitBtn {
+    .vtSubmitBtn {
         width: 70%;
         height: 5rem;
         font-size: 1.3rem;

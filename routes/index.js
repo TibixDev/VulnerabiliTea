@@ -122,16 +122,16 @@ router.post(
                     email: req.body.email
                 }, (err, user) => {
                     if (err) {
-                        reject(new Error({
+                        reject({
                             text: "Server Error.",
                             type: "serverError"
-                        }));
+                        });
                     }
-                    if (Boolean(user)) {
-                        reject(new Error({
+                    if (user) {
+                        reject({
                             text: "The specified email is already in use.",
                             type: "emailInUse"
-                        }));
+                        });
                     }
                     resolve(true);
                 });
@@ -166,16 +166,16 @@ router.post(
                     },
                     (err, user) => {
                         if (err) {
-                            reject(new Error({
+                            reject({
                                 text: "Server Error.",
                                 type: "serverError"
-                            }));
+                            });
                         }
-                        if (Boolean(user)) {
-                            reject(new Error({
+                        if (user) {
+                            reject({
                                 text: "The specified username is already in use.",
                                 type: "usernameInUse"
-                            }));
+                            });
                         }
                         resolve(true);
                     }

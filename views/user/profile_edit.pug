@@ -1,0 +1,20 @@
+extends ../base.pug
+
+block headblock
+    - var title = 'Edit Profile'
+
+block content
+    .container-fluid.justify-content-center.mt-3
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary.color-brown.mb-3
+                h1 Edit Profile - #{username}
+        .row.justify-content-center.mt-3
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.color-brown
+                form#editProfileForm(action='/user/profile/edit' method='post' encType='multipart/form-data')
+                    .row
+                        .col-12.mb-4
+                            label.form-label.color-brown.h4(for='description') Bio 
+                                span.h6 (max 4096 characters)
+                            .trumbowyg.bio.vulnRTEditor.form-control(name='trumbowyg' uid=user._id)
+                    .row.justify-content-center
+                            button.btn.btn-primary.vtSubmitBtn Save Profile

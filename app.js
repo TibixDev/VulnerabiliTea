@@ -65,9 +65,11 @@ app.use('/user', routes.user);
 app.use('/files', routes.files);
 
 // LetsEncrypt
-app.get(`/.well-known/acme-challenge/${process.env.ACME_URI || ''}`, (req, res) => {
-    res.send(process.env.ACME_SERVE || 'No Certs');
-});
+if (process.env.ACME_URI && process.env.ACME_SERVE) {
+    app.get(`/.well-known/acme-challenge/${process.env.ACME_URI}`, (req, res) => {
+        res.send(process.env.ACME_SERVE);
+    });
+}
 
 app.all('/*', (req, res, next) => {
    return helpers.sendError(res, 400);

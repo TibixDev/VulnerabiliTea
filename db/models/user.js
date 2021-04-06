@@ -17,13 +17,9 @@ let user = {
         type: Date,
         default: Date.now
     },
-    reportCount: {
-        type: Number,
-        default: 0
-    },
-    groups: {
-        type: Array,
-        default: []
+    bio: {
+        type: String,
+        default: 'It appears that nothing is here.'
     }
 }
 

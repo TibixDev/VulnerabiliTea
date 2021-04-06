@@ -10,6 +10,16 @@ function isLoggedIn(req, res, next) {
     next();
 }
 
+function isLoggedInPOST(req, res, next) {
+    if (!req.session.user) {
+        return sendStyledJSONErr([{
+            msg: 'You have to be logged in the access this POST endpoint.',
+            type: 'notLoggedIn'
+        }]);
+    }
+    next();
+}
+
 function sendError(res, errCode) {
     let errDescription;
     switch (errCode) {
@@ -70,7 +80,8 @@ async function tokenValid(vuln, token) {
 
 module.exports = {
     isLoggedIn,
+    isLoggedInPOST,
     sendError,
     sendStyledJSONErr,
-    tokenValid
+    tokenValid,
 };

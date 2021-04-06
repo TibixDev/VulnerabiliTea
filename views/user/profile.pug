@@ -10,7 +10,7 @@ block content
                 i.fas.fa-user-circle.fa-10x.mb-3(style='vertical-align: middle;')
                 h1 #{user.username}
                     if ownProfile
-                        a(href='#')
+                        a(href='/user/profile/edit')
                             i.rounded.ms-3.fas.fa-edit
         .row.justify-content-center
             .col-xl-5.col-l-6.col-md-8.col-sm-10.color-brown
@@ -33,7 +33,7 @@ block content
                                             strong Public Vulnerability Count: 
                                         | #{vulns.length || 0}
                                     p
-                                        strong Bio: 
-                                        | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sodales, nulla non maximus facilisis, leo libero molestie nulla, vel condimentum augue est non lectus. Quisque tristique tempus arcu ut accumsan. Quisque sollicitudin ipsum vitae ante facilisis, sit amet suscipit mi pretium. Maecenas venenatis neque in mollis luctus. Sed placerat, diam vitae tincidunt posuere, arcu neque ullamcorper magna, id scelerisque mi metus at velit. Nunc accumsan turpis vitae ex volutpat tempor. Mauris gravida sollicitudin lacus, vel rhoncus ex sollicitudin in. Donec tortor nunc, sodales sit amet pulvinar non, feugiat congue turpis. Nam placerat suscipit ultricies.
+                                        strong.border-bottom.border-primary.color-brown Bio: 
+                                    .bio(uid=user._id)
                     .tab-pane.fade#vulnTab.col-12.col-xl-7.col-l-9.col-md-10.col-sm-12(role="tabpanel" aria-labelledby="vulnTabControl")
                         +vulnTable(vulns)

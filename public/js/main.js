@@ -481,3 +481,59 @@ function updateTimer(obj) {
     $(obj).attr("time", $(obj).attr("time") - 1000);
     $(obj).text(humanizeDuration($(obj).attr("time")));
 }
+
+
+// Profile Editing
+$("#editProfileForm").submit((e) => {
+    let actionUrl = $("#editProfileForm").attr("action");
+    e.preventDefault();
+    // The FormData object exists here because
+    // then additional normal form fields can
+    // be added without worrying.
+    let fData = new FormData($("#editProfileForm")[0]);
+    fData.append("bio", $(".trumbowyg-editor").html());
+
+    $.ajax({
+        type: "POST",
+        url: actionUrl,
+        data: fData,
+        processData: false,
+        contentType: false,
+        success: (res) => {
+            if (res.status == "success") {
+                $("#infoDiv").empty();
+                $("#infoDiv").append(`
+                    <div class='text-dark my-2 mx-1 note note-success'>
+                        <strong>Success</strong>
+                        Profile modified successfully. Redirecting in 3 seconds...
+                    </div>`);
+                setTimeout(() => {
+                    window.location.href = "/user/profile/edit";
+                }, 3000);
+            }
+        },
+        error: (res, err) => {
+            renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
+            $("#infoDiv")[0].scrollIntoView();
+        },
+    });
+});
+
+// Bio Retrieval for Profiles and Profile Edits
+if ($('.bio').length) {
+    $.ajax({
+        type: "POST",
+        url: '/user/profile/bio',
+        data: JSON.stringify({uid: $('.bio').attr('uid')}),
+        processData: false,
+        contentType: "application/json",
+        success: (res) => {
+            $(".bio").append(
+                DOMPurify.sanitize(res.bio)
+            );
+        },
+        err: (err) => {
+            console.log(err);
+        }
+    })
+}

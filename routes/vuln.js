@@ -108,7 +108,7 @@ router.get("/edit/:vulnID", async (req, res) => {
     provide multipart-form-data (kms) */
 router.post(
     ["/add", "/edit"],
-    helpers.isLoggedIn,
+    helpers.isLoggedInPOST,
     [
         body("affectedProduct")
             .exists()
