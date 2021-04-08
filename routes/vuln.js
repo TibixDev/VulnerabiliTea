@@ -424,131 +424,122 @@ router.post(
 );
 
 // Delete Vulnerabity (processing)
-router.delete("/delete", helpers.isLoggedIn, async (req, res) => {
-    if (!req.body.vtid) {
-        return helpers.sendStyledJSONErr(
-            res,
-            [
-                {
-                    msg: "There was no VTID specified.",
-                    type: "noVTID",
-                },
-            ],
-            400
+router.delete(
+    "/delete",
+    helpers.isLoggedIn,
+    [
+        body("vtid").exists().withMessage({
+            text: "There was no VTID specified.",
+            type: "noVTID",
+        }),
+    ],
+    helpers.processValidationErrs,
+    async (req, res) => {
+        let vuln = await Vulnerability.findOne(
+            {
+                vtid: req.body.vtid,
+            },
+            "author vtid"
         );
-    }
-    let vuln = await Vulnerability.findOne(
-        {
-            vtid: req.body.vtid,
-        },
-        "author vtid"
-    );
-    if (!vuln) {
-        return helpers.sendStyledJSONErr(
-            res,
-            [
+        if (!vuln) {
+            return helpers.sendStyledJSONErr(
+                res,
                 {
                     msg:
                         "A vulnerability matching the supplied VTID wasn't found.",
                     type: "notFound",
                 },
-            ],
-            400
-        );
-    }
-    if (vuln.author != req.session.user) {
-        return helpers.sendStyledJSONErr(
-            res,
-            [
-                {
-                    msg:
-                        "You do not have permission to modify this vulnerability.",
-                    type: "fordidden",
-                },
-            ],
-            403
-        );
-    }
-
-    // TODO: Fix vuln folder deletion on vuln deletion
-    fs.access(`files/${vuln.vtid}/`, (err) => {
-        console.log(err);
-        if (!err) {
-            fs.rmdir(
-                `files/${vuln.vtid}`,
-                {
-                    recursive: true,
-                },
-                (err) => {
-                    console.log(err);
-                }
+                400
             );
         }
-    });
-    await vuln.delete();
-    return res.json({
-        status: "success",
-    });
-});
+        if (vuln.author != req.session.user) {
+            return helpers.sendStyledJSONErr(
+                res,
+                [
+                    {
+                        msg:
+                            "You do not have permission to modify this vulnerability.",
+                        type: "fordidden",
+                    },
+                ],
+                403
+            );
+        }
+
+        // TODO: Fix vuln folder deletion on vuln deletion
+        fs.access(`files/${vuln.vtid}/`, (err) => {
+            console.log(err);
+            if (!err) {
+                fs.rmdir(
+                    `files/${vuln.vtid}`,
+                    {
+                        recursive: true,
+                    },
+                    (err) => {
+                        console.log(err);
+                    }
+                );
+            }
+        });
+        await vuln.delete();
+        return res.json({
+            status: "success",
+        });
+    }
+);
 
 // Return Vulnerability description as JSON
-router.post("/data", async (req, res) => {
-    if (!req.body.vtid) {
-        return helpers.sendStyledJSONErr(
-            res,
-            [
-                {
-                    msg: "There was no VTID specified.",
-                    type: "noVTID",
-                },
-            ],
-            400
-        );
-    }
-    let vuln = await Vulnerability.findOne(
-        {
-            vtid: req.body.vtid,
-        },
-        "author description public tokens"
-    ).lean();
-    if (!vuln) {
-        return helpers.sendStyledJSONErr(
-            res,
-            [
+router.post(
+    "/data",
+    [
+        body("vtid").exists().withMessage({
+            text: "There was no VTID specified.",
+            type: "noVTID",
+        }),
+    ],
+    helpers.processValidationErrs,
+    async (req, res) => {
+        let vuln = await Vulnerability.findOne(
+            {
+                vtid: req.body.vtid,
+            },
+            "author description public tokens"
+        ).lean();
+        if (!vuln) {
+            return helpers.sendStyledJSONErr(
+                res,
                 {
                     msg:
                         "A vulnerability matching the supplied VTID wasn't found.",
                     type: "notFound",
                 },
-            ],
-            400
-        );
-    }
-    if (vuln.author == req.session.user || vuln.public) {
-        return res.json({
-            status: "success",
-            vuln: vuln,
-        });
-    }
-    if (req.body.token && !vuln.public) {
-        if (await helpers.tokenValid(vuln, req.body.token)) {
+                400
+            );
+        }
+        if (vuln.author == req.session.user || vuln.public) {
             return res.json({
                 status: "success",
                 vuln: vuln,
             });
         }
-    }
-    return helpers.sendStyledJSONErr(
-        res,
-        [
+        if (req.body.token && !vuln.public) {
+            if (await helpers.tokenValid(vuln, req.body.token)) {
+                return res.json({
+                    status: "success",
+                    vuln: vuln,
+                });
+            }
+        }
+        return helpers.sendStyledJSONErr(
+            res,
             {
                 msg: "You do not have permission to view this vulnerability.",
                 type: "fordidden",
             },
-        ],
-        403
-    );
-});
+            403
+        );
+    }
+);
 
 // Share routes
 router.get("/share/:vtid", async (req, res) => {
@@ -567,13 +558,17 @@ router.get("/share/:vtid", async (req, res) => {
         }
         let tokenDelCount = 0;
         vuln.tokens.forEach((token, i) => {
-            console.log(`Token: ${token.code} [ExpDate: ${token.expiryDate.getTime()} | Now: ${Date.now()}]`);
+            console.log(
+                `Token: ${
+                    token.code
+                } [ExpDate: ${token.expiryDate.getTime()} | Now: ${Date.now()}]`
+            );
             if (token.expiryDate.getTime() < Date.now()) {
-                vuln.tokens.filter(t => t.code != token.code);
+                vuln.tokens.filter((t) => t.code != token.code);
                 tokenDelCount++;
             }
         });
-        console.log('TokenDelCount: ' + tokenDelCount);
+        console.log("TokenDelCount: " + tokenDelCount);
         if (tokenDelCount > 0) {
             vuln.save();
         }
@@ -601,16 +596,8 @@ router.post(
                 text: "The expiry date specified was not a valid date.",
                 type: "invalidTokenExpDate",
             }),*/
-    ],
+    ], helpers.processValidationErrs,
     async (req, res) => {
-        let errors = [];
-        const validationErrors = validationResult(req);
-        if (!validationErrors.isEmpty()) {
-            errors = validationErrors.array();
-        }
-        if (errors.length > 0) {
-            return helpers.sendStyledJSONErr(res, errors, 400);
-        }
         let vuln = await Vulnerability.findOne(
             {
                 vtid: req.body.vtid,
@@ -620,38 +607,31 @@ router.post(
         if (!vuln) {
             return helpers.sendStyledJSONErr(
                 res,
-                [
-                    {
-                        msg:
-                            "A vulnerability with the specified VTID couldn't be found.",
-                        type: "vulnnotfound",
-                    },
-                ],
+                {
+                    msg:
+                        "A vulnerability with the specified VTID couldn't be found.",
+                    type: "vulnnotfound",
+                },
                 400
             );
         }
         if (vuln.author != req.session.user) {
             return helpers.sendStyledJSONErr(
                 res,
-                [
-                    {
-                        msg: "You do not have access to this resource.",
-                        type: "forbidden",
-                    },
-                ],
+                {
+                    msg: "You do not have access to this resource.",
+                    type: "forbidden",
+                },
                 403
             );
         }
         if (vuln.public) {
             return helpers.sendStyledJSONErr(
                 res,
-                [
-                    {
-                        msg:
-                            "You cannot generate tokens for a public discovery.",
-                        type: "vulnnotprivate",
-                    },
-                ],
+                {
+                    msg: "You cannot generate tokens for a public discovery.",
+                    type: "vulnnotprivate",
+                },
                 400
             );
         }
@@ -680,17 +660,8 @@ router.post(
             text: "There was no token specified for deletion.",
             type: "noToken",
         }),
-    ],
+    ], helpers.processValidationErrs,
     async (req, res) => {
-        console.log(req.body.krunker_token);
-        let errors = [];
-        const validationErrors = validationResult(req);
-        if (!validationErrors.isEmpty()) {
-            errors = validationErrors.array();
-        }
-        if (errors.length > 0) {
-            return helpers.sendStyledJSONErr(res, errors, 400);
-        }
         let vuln = await Vulnerability.findOne(
             {
                 vtid: req.body.vtid,
@@ -700,38 +671,32 @@ router.post(
         if (!vuln) {
             return helpers.sendStyledJSONErr(
                 res,
-                [
-                    {
-                        msg:
-                            "A vulnerability with the specified VTID couldn't be found",
-                        type: "vulnnotfound",
-                    },
-                ],
+                {
+                    msg:
+                        "A vulnerability with the specified VTID couldn't be found",
+                    type: "vulnnotfound",
+                },
                 400
             );
         }
         if (vuln.author != req.session.user) {
             return helpers.sendStyledJSONErr(
                 res,
-                [
-                    {
-                        msg: "You do not have access to this resource.",
-                        type: "forbidden",
-                    },
-                ],
+                {
+                    msg: "You do not have access to this resource.",
+                    type: "forbidden",
+                },
                 403
             );
         }
         if (vuln.public) {
             return helpers.sendStyledJSONErr(
                 res,
-                [
-                    {
-                        msg:
-                            "Token management is not available for public vulnerabilities.",
-                        type: "vulnnotprivate",
-                    },
-                ],
+                {
+                    msg:
+                        "Token management is not available for public vulnerabilities.",
+                    type: "vulnnotprivate",
+                },
                 400
             );
         }
@@ -746,12 +711,10 @@ router.post(
         } else {
             return helpers.sendStyledJSONErr(
                 res,
-                [
-                    {
-                        msg: "No matching entry found for the specified token.",
-                        type: "tokennotfound",
-                    },
-                ],
+                {
+                    msg: "No matching entry found for the specified token.",
+                    type: "tokennotfound",
+                },
                 400
             );
         }

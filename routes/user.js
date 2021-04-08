@@ -48,16 +48,9 @@ router.post(
                 text: "The UID specified wasn't 24 characters long.",
                 type: "uidCharLimitMismatch",
             })
-    ],
+    ], helpers.processValidationErrs,
     async (req, res) => {
         let errors = [];
-        const validationErrors = validationResult(req);
-        if (!validationErrors.isEmpty()) {
-            errors = validationErrors.array();
-        }
-        if (errors.length > 0) {
-            return helpers.sendStyledJSONErr(res, errors, 400);
-        }
         let user = await User.findById(req.body.uid, "bio").lean();
         if (!user) {
             helpers.sendStyledJSONErr([{

@@ -323,6 +323,10 @@ header {
     color: gray;
 }
 
+.voteTriggered {
+    color:rgb(240, 74, 24);
+}
+
 /* ExpiryDatePicker CSS */
 #expiryDatePicker {
     border: none;

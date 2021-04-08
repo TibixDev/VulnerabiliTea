@@ -82,6 +82,7 @@ function colorizeCVSS() {
     });
 }
 
+// The entity map for escaping unsafe characters
 let entityMap = {
     "&": "&amp;",
     "<": "&lt;",
@@ -93,6 +94,7 @@ let entityMap = {
     "=": "&#x3D;",
 };
 
+// Uses entityMap to filter out the characters and prevent XSS
 function escapeHtml(string) {
     return String(string).replace(/[&<>"'`=\/]/g, function (s) {
         return entityMap[s];
@@ -332,6 +334,7 @@ if ($(".vulnDeleteBtn").length) {
     });
 }
 
+// Load Activity initially and on scroll
 if ($("#activityLoader").length) {
     let activityLoader = $("#activityLoader");
     let skipCounter = 0;
@@ -346,21 +349,28 @@ if ($("#activityLoader").length) {
         vuln.authorName = escapeHtml(vuln.authorName);
 
         $("#vulnActivityCol").append(
-            `<div class="activityElement my-3 color-white"> <div class="d-flex flex-column float-start me-3 bg-primary rounded activitySection"><i class="fas fa-arrow-up mx-2 mt-2 upvoteArrow"></i> <p class="mx-2" style="margin: 0.3em;">${
-                vuln.communityScore || 0
-            }</p><i class="fas fa-arrow-down mx-2 downvoteArrow"></i> </div><div class="ms-5 bg-primary rounded"> <div class="ms-2 activitySection"> <div class="pb-1"></div><a class="color-white" href="/vuln/id/${
-                vuln.vtid
-            }"><h5 class="d-inline">${
-                vuln.vtid
-            }</h5></a><a class="color-white" href="user/profile/${
-                vuln.author
-            }"><h5 class="d-inline float-end me-2">${
-                vuln.authorName
-            }</h5></a><p class="mt-1">${vuln.affectedProduct} - ${
-                vuln.affectedFeature
-            } - ${vuln.type} (<strong class="cvssScore">${
-                vuln.cvss
-            }</strong>)</p></div></div></div>`
+        `<div class="activityElement my-3 color-white">
+            <div class="d-flex flex-column float-start me-3 bg-primary rounded activitySection">
+                <i onclick="ProcessVote(this)" class="fas fa-arrow-up mx-2 mt-2 handCur voteArrow upvoteArrow ${vuln.ownVote == 'UP' ? 'voteTriggered' : ''}"></i>
+                <p class="mx-2 ${vuln.ownVote == 'UP' || vuln.ownVote == 'DOWN' ? 'voteTriggered' : ''} voteScore" style="margin: 0.3em;">${vuln.voteScore || 0}
+                </p>
+                <i onclick="ProcessVote(this)" class="fas fa-arrow-down mx-2 handCur voteArrow downvoteArrow ${vuln.ownVote == 'DOWN' ? 'voteTriggered' : ''}"></i> 
+            </div>
+            <div class="ms-5 bg-primary rounded">
+               <div class="ms-2 activitySection">
+                  <div class="pb-1"></div>
+                  <a class="color-white" href="/vuln/id/${vuln.vtid}">
+                     <h5 class="vtid d-inline">${vuln.vtid}</h5>
+                  </a>
+                  <a class="color-white" href="user/profile/${vuln.author}">
+                     <h5 class="d-inline float-end me-2">${vuln.authorName}
+                     </h5>
+                  </a>
+                  <p class="mt-1">${vuln.affectedProduct} - ${vuln.affectedFeature} - ${vuln.type} (<strong class="cvssScore">${vuln.cvss}</strong>)
+                  </p>
+               </div>
+            </div>
+         </div>`
         );
         colorizeCVSS();
     }
@@ -404,6 +414,72 @@ if ($("#activityLoader").length) {
     $(window).scroll(() => {
         if (isScrolledIntoView(activityLoader)) {
             getNewActivityEntries();
+        }
+    });
+}
+
+// Activity Vote Button Processing (UP, DOWN, CANCEL)
+
+function ProcessVote(voteButton) {
+    let voteType = $(voteButton).hasClass('upvoteArrow') ? 'UP' : 'DOWN';
+    if ($(voteButton).hasClass('voteTriggered')) {
+        voteType = 'CANCEL'
+    }
+    console.log(voteType);
+
+    function FeedbackProcessor() {
+        $(voteButton).addClass('voteTriggered');
+        let counter = $(voteButton).parent().find('.voteScore');
+        let counterVal = voteType === 'UP' ? 1 : -1;
+        $(counter).addClass('voteTriggered');
+        $(counter).text(parseInt($(counter).text()) + counterVal);
+        let opposite = $(voteButton).parent().find($(voteButton).hasClass('upvoteArrow') ? '.downvoteArrow' : '.upvoteArrow');
+        if ($(opposite).hasClass('voteTriggered')) {
+            $(opposite).removeClass('voteTriggered');
+            $(counter).text(parseInt($(counter).text()) + counterVal);
+        }
+    }
+
+    let vtid = $(voteButton).parentsUntil('.activityElement').parent().find('.vtid').text();
+    $.ajax({
+        type: 'POST',
+        url: '/activity/processVote',
+        data: JSON.stringify({
+            vtid: vtid,
+            voteType: voteType
+        }),
+        processData: false,
+        contentType: 'application/json',
+        success: (res) => {
+            
+    switch (voteType) {
+        case 'UP':
+                FeedbackProcessor();
+            break;
+        case 'DOWN':
+                FeedbackProcessor();
+            break;
+        case 'CANCEL':
+                    let upvoteArrow = $(voteButton).hasClass('upvoteArrow') ? $(voteButton) : $(voteButton).parent().find('.upvoteArrow');
+                    let downvoteArrow = $(voteButton).hasClass('downvoteArrow') ? $(voteButton) : $(voteButton).parent().find('.upvoteArrow');
+
+                    if ($(upvoteArrow).hasClass('voteTriggered')) {
+                        $(upvoteArrow).removeClass('voteTriggered')
+                        let counter = $(voteButton).parent().find('.voteScore');
+                        $(counter).removeClass('voteTriggered')
+                        $(counter).text(parseInt($(counter).text()) - 1);
+                    }
+                    if ($(downvoteArrow).hasClass('voteTriggered')) {
+                        $(downvoteArrow).removeClass('voteTriggered')
+                        let counter = $(voteButton).parent().find('.voteScore');
+                        $(counter).removeClass('voteTriggered');
+                        $(counter).text(parseInt($(counter).text()) + 1);
+                    }
+                break;
+            }
+        },
+        error: (res, err) => {
+            renderError($.find("#infoDiv")[0], res.responseJSON.msgs);
         }
     });
 }
@@ -528,9 +604,13 @@ if ($('.bio').length) {
         processData: false,
         contentType: "application/json",
         success: (res) => {
-            $(".bio").append(
-                DOMPurify.sanitize(res.bio)
-            );
+            if (res.bio) {
+                $(".bio").append(
+                    DOMPurify.sanitize(res.bio)
+                );
+            } else {
+                $(".bio").append("<em><strong>Hmm... It seems like nothing is here.</strong></em>")
+            }
         },
         err: (err) => {
             console.log(err);

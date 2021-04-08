@@ -1,3 +1,5 @@
+ const { body, validationResult } = require("express-validator");
+
 function isLoggedIn(req, res, next) {
     if (!req.session.user) {
         req.flash("msgs", [{
@@ -10,12 +12,20 @@ function isLoggedIn(req, res, next) {
     next();
 }
 
+function processValidationErrs(req, res, next) {
+    let validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+        return sendStyledJSONErr(res, validationErrors.array(), 400);
+    }
+    next();
+}
+
 function isLoggedInPOST(req, res, next) {
     if (!req.session.user) {
-        return sendStyledJSONErr([{
+        return sendStyledJSONErr(res, {
             msg: 'You have to be logged in the access this POST endpoint.',
             type: 'notLoggedIn'
-        }]);
+        }, 400);
     }
     next();
 }
@@ -43,13 +53,22 @@ function sendError(res, errCode) {
 
 function sendStyledJSONErr(res, errs, code = 200) {
     let errList = [];
-    for (err of errs) {
+    if (errs instanceof Array) {
+        for (err of errs) {
+            errList.push({
+                noteType: "note-danger",
+                pretext: "Error ",
+                value: err.msg.text || err.msg,
+                errType: err.msg.type || err.type
+            });
+        }
+    } else {
         errList.push({
             noteType: "note-danger",
             pretext: "Error ",
-            value: err.msg.text || err.msg,
-            errType: err.msg.type || err.type
-        });
+            value: errs.msg.text || errs.msg,
+            errType: errs.msg.type || errs.type
+        })
     }
     return res.status(code).json({
         status: "failed",
@@ -84,4 +103,5 @@ module.exports = {
     sendError,
     sendStyledJSONErr,
     tokenValid,
+    processValidationErrs
 };

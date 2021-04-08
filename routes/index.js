@@ -215,10 +215,9 @@ router.post(
         if (req.session.user) {
             res.redirect("/vuln");
         }
-        const validationErrors = validationResult(req);
-        if (!validationErrors.isEmpty()) {
+        if (!validationResult(req).isEmpty()) {
             let errList = [];
-            for (err of validationErrors.array()) {
+            for (err of validationResult(req).array()) {
                 errList.push({
                     noteType: "note-danger",
                     pretext: "Error",
