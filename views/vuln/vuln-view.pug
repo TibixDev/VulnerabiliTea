@@ -1,7 +1,7 @@
 extends ../base.pug
 
 mixin attachmentEntry(attachment)
-    .bg-primary.rounded.color-white.text-center.mx-1.attachmentContainer
+    .bg-lprimary.rounded.color-white.text-center.mx-1.attachmentContainer
         a.color-white(href='/files/' + vuln.vtid + '/' + attachment.file + (token ? '?token=' + token : ''))
             i.fas.fa-file-archive.fa-3x.mt-2
             p.my-1.mx-1.attachmentTitle= attachment.file
@@ -12,9 +12,9 @@ block headblock
 block content
     .container-fluid.justify-content-center.mt-3
         .row.justify-content-center
-            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary.color-brown.mb-3
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary.color-primary.mb-3
                 h1#vulnOverviewHeader(vtid=vuln.vtid) Discovery Overview - #{vuln.vtid}
-            .col-xl-8.col-lg-10.col-md-12.col-sm-12.color-brown
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.color-primary
                     .row
                         ul.nav.nav-tabs.mb-3#profileTabs.rounded-top-3(role="tablist")
                             li.nav-item(role="presentation")

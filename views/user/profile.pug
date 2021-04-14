@@ -6,14 +6,14 @@ block headblock
 block content
     .container-fluid.mt-5
         .row.justify-content-center.mb-2
-            .col-xl-5.col-l-6.col-md-8.col-sm-10.text-center.color-brown
+            .col-xl-5.col-l-6.col-md-8.col-sm-10.text-center.color-primary
                 i.fas.fa-user-circle.fa-10x.mb-3(style='vertical-align: middle;')
                 h1 #{user.username}
                     if ownProfile
                         a(href='/user/profile/edit')
                             i.rounded.ms-3.fas.fa-edit
         .row.justify-content-center
-            .col-xl-5.col-l-6.col-md-8.col-sm-10.color-brown
+            .col-xl-5.col-l-6.col-md-8.col-sm-10.color-primary
                 ul.nav.nav-tabs.nav-justified.mb-3#profileTabs.rounded-top-3(role="tablist")
                     li.nav-item(role="presentation")
                         a.nav-link.active(id="infoTabControl" href="#infoTab" data-mdb-toggle="tab" role="tab" aria-controls="infoTab" aria-selected="true") Info
@@ -22,7 +22,7 @@ block content
             .row.justify-content-center
                 .tab-content#profileTabs-content.d-flex.justify-content-center
                     .tab-pane.fade.show.active#infoTab.col-xl-5.col-l-6.col-md-8.col-sm-10(role="tabpanel" aria-labelledby="infoTabControl")
-                        .container-fluid.color-brown
+                        .container-fluid.color-primary
                             .row
                                 .col.profileDesc
                                     p.regDate #{user.registerDate}
@@ -33,7 +33,7 @@ block content
                                             strong Public Vulnerability Count: 
                                         | #{vulns.length || 0}
                                     
-                                    strong.border-bottom.border-primary.color-brown Bio:
+                                    strong.border-bottom.border-primary.color-primary Bio:
                                     .bio(uid=user._id)
                     .tab-pane.fade#vulnTab.col-12.col-xl-7.col-l-9.col-md-10.col-sm-12(role="tabpanel" aria-labelledby="vulnTabControl")
                         +vulnTable(vulns)

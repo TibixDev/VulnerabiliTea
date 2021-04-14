@@ -350,13 +350,13 @@ if ($("#activityLoader").length) {
 
         $("#vulnActivityCol").append(
         `<div class="activityElement my-3 color-white">
-            <div class="d-flex flex-column float-start me-3 bg-primary rounded activitySection">
+            <div class="d-flex flex-column float-start me-3 bg-lprimary rounded activitySection">
                 <i onclick="ProcessVote(this)" class="fas fa-arrow-up mx-2 mt-2 handCur voteArrow upvoteArrow ${vuln.ownVote == 'UP' ? 'voteTriggered' : ''}"></i>
                 <p class="mx-2 ${vuln.ownVote == 'UP' || vuln.ownVote == 'DOWN' ? 'voteTriggered' : ''} voteScore" style="margin: 0.3em;">${vuln.voteScore || 0}
                 </p>
                 <i onclick="ProcessVote(this)" class="fas fa-arrow-down mx-2 handCur voteArrow downvoteArrow ${vuln.ownVote == 'DOWN' ? 'voteTriggered' : ''}"></i> 
             </div>
-            <div class="ms-5 bg-primary rounded">
+            <div class="ms-5 bg-lprimary rounded">
                <div class="ms-2 activitySection">
                   <div class="pb-1"></div>
                   <a class="color-white" href="/vuln/id/${vuln.vtid}">

@@ -1,8 +1,17 @@
 /* Global CSS */
+:root {
+    --primary: #814A26;
+    --primary-light: #97572d;
+    --bg-primary: #492a15;
+    --bg-primary-light: #774a2c;
+    --bg-primary-dark: #3b2211;
+    --body-bg: #ffe8d6;
+    --body-color: white;
+}
 
 body {
-    background-color: #ffe8d6;
-    color: white;
+    background-color: var(--body-bg);
+    color: var(--body-color);
     font-family: 'Raleway', sans-serif;
     /*height: 100vh;
     margin: 0;*/
@@ -16,7 +25,7 @@ html, body {
 }
 
 /* CSS Classes */
-.color-brown {
+.color-primary {
     color: #814A26!important;
 }
 
@@ -28,12 +37,12 @@ html, body {
     color: #EEEEEE!important;
 }
 
-.bg-brown {
-    background-color: #492a15!important;
+.bg-primary {
+    background-color: var(--bg-primary)!important;
 }
 
-.bg-lbrown {
-    background-color: #774a2c!important;
+.bg-lprimary {
+    background-color: var(--bg-primary-light)!important;
 }
 
 .bg-silver {
@@ -56,7 +65,7 @@ html, body {
 /* Index CSS */
 /* TODO: Fix some class names */
 .titleContainer {
-    background-color: #814A26;
+    background-color: var(--primary);
 }
 
 .titleIco {
@@ -94,11 +103,11 @@ html, body {
 .featureQuestionHeader {
     font-size: 2.3rem;
     font-weight: 300;
-    color: #814A26;
+    color: var(--primary);
 }
 
 .featureCardHeader {
-    background-color: #814A26;
+    background-color: var(--primary);
     border-radius: 1rem 1rem 0 0;
 }
 
@@ -115,7 +124,7 @@ html, body {
     position: fixed;
     height: 3.5rem;
     transition: margin-left 0.7s;
-    background-color: #814A26;
+    background-color: var(--primary);
 }
 
 header {
@@ -149,10 +158,10 @@ header {
     bottom: 0;
     width: 100%;*/
     flex-shrink: 0;
-    background-color: #814A26;
-    background: rgb(134, 83, 0);
+    background-color: var(--primary);
+    /*background: rgb(134, 83, 0);*/
     transition: margin-left 0.7s;
-    overflow-x: hidden;;
+    overflow-x: hidden;
 }
 
 .sidebar {
@@ -162,7 +171,7 @@ header {
     position: fixed;
     z-index: 1;
     left: 0;
-    background-color: #492a15;
+    background-color: var(--bg-primary);;
     color: white;
     margin-top: 3.5rem;
     overflow-x: hidden;
@@ -180,7 +189,7 @@ header {
 
 .sidebar a:hover {
     color: rgb(226, 226, 226);
-    background-color: #62391d;
+    background-color: var(--bg-primary-dark);
 }
 
 .content {
@@ -197,7 +206,7 @@ header {
 .loginBar {
     min-height: 3rem;
     border-radius: 0.5rem 0.5rem 0 0;
-    background-color: #814A26;
+    background-color: var(--primary);
     color: white;
     font-weight: 200 !important;
 }
@@ -213,7 +222,7 @@ header {
 }
 
 .inpAddon {
-    background-color: #814A26;
+    background-color: var(--primary);
     color: white;
     width: 3.7rem;
     line-height: 1.6!important;
@@ -229,12 +238,12 @@ header {
 /* Vuln CSS */
 
 .vulnCont h1 {
-    color: #814A26;
+    color: var(--primary);
 }
 
 .vulnTable {
     font-size: 0.9rem;
-    border-color: #62391d;
+    border-color: var(--primary);
 }
 
 /* Vuln Add CSS */
