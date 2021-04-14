@@ -59,7 +59,6 @@ router.post("/getActivity", async (req, res) => {
     });
 });
 
-// TODO: Finish voting procedure (both client-, and server.)
 router.post("/processVote", helpers.isLoggedInPOST, [
     body("vtid").exists().withMessage({
         text: "There was no VTID specified.",

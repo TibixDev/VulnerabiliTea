@@ -262,7 +262,7 @@ router.post(
                         );
                     }
 
-                    // This is not good practice, someone could teoretically
+                    // This is not good practice, someone could theoretically
                     // fill the server with garbage without any VTID relations
                     // TODO: Implement a warning system, fix this function
                     if (errors.length > 0) {
@@ -284,6 +284,7 @@ router.post(
                     bounty: req.body.bountyAmount || 0,
                     attachments: fileDBEntries,
                     public: public,
+                    votes: [{uid: req.session.user, voteStatus: "UP"}]
                 });
                 await vulnerability.save();
                 res.json({

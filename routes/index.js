@@ -234,15 +234,13 @@ router.post(
                 saltRounds
             );
         } catch (err) {
-            if (err) {
-                return res.render("register", {
-                    msgs: {
-                        noteType: "note-danger",
-                        pretext: "Error",
-                        value: "Server Error",
-                    },
-                });
-            }
+            return res.render("register", {
+                msgs: {
+                    noteType: "note-danger",
+                    pretext: "Error",
+                    value: "Server Error",
+                },
+            });
         }
         let user = new User({
             email: req.body.email,

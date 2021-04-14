@@ -10,10 +10,8 @@ mongoose.connect(
         useUnifiedTopology: true,
     },
     (err) => {
-        if (err) {
-            console.log("There was an error connecting to MongoDB:");
-            console.log(err);
-        }
+        console.log("There was an error connecting to MongoDB:");
+        console.log(err);
     }
 );
 
