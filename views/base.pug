@@ -16,23 +16,25 @@ html
         include includes/body_includes.pug
         header#header.container-fluid.topNavContainer
             .row.topNavRow.justify-content-center
-                .col-6.headerCol.text-center.d-flex.align-items-center
+                headerCol.text-center.d-flex.align-items-center
                     .sidebarBtn.color-white(onclick='sidebarHandler();')
                         i.fas.fa-bars.fa-2x.baseHamburgerMenu
-                    a(href='/')
-                        img.logo(src="/img/final_white.png")
+                        | Menu
                         //i.color-white.fas.fa-mug-hot.fa-2x.baseTitleIco
                     //h1.baseTitleHeader.color-white VulnerabiliTea
-                .col-6.headerCol.headerUserSpace.text-center.d-flex.align-items-center.justify-content-end
+            .logo
+                a(href='/')
+                img(src="/img/final_white.png")
+            .headerCol.headerUserSpace.text-center.d-flex.align-items-center.justify-content-end
                     .d-inline
                         if username
                             a#headerSignedIn.d-flex.align-items-center.justify-content-end.color-white(href='/user/profile')
-                                i(style='vertical-align: middle;' class='fas fa-user-circle fa-2x').me-2.ms-2.float-start
-                                | #{username}
+                                i(style='vertical-align: middle;' class='fas fa-user-circle').me-2.ms-2.float-start
+                                | Profile
                         else
                             a#headerSignIn.d-flex.align-items-center.justify-content-end.color-white(href='/login')
-                                i(style='vertical-align: middle;' class='fas fa-sign-in-alt fa-2x').me-2.ms-2.float-start
-                                | Sign In
+                                i(style='vertical-align: middle;' class='fas fa-sign-in-alt').me-2.ms-2.float-start
+                                | Login
         #sidebar.sidebar
             +sidebarOption('fas fa-shield-alt', 'Activity', '/activity')
             if username

@@ -1,11 +1,11 @@
 /* Global CSS */
 :root {
-    --primary: #814A26;
+    --primary: #0a8a00;
     --primary-light: #97572d;
-    --bg-primary: #492a15;
-    --bg-primary-light: #774a2c;
-    --bg-primary-dark: #3b2211;
-    --body-bg: #ffe8d6;
+    --bg-primary: #0a8a00;
+    --bg-primary-light: #0a8a00;
+    --bg-primary-dark: #076800;
+    --body-bg: #242424;
     --body-color: white;
 }
 
@@ -24,13 +24,13 @@ html, body {
     height: 100%;
 }
 
-a, p, td, form-label {
-    color: var(--primary)!important;
+a, p, td {
+    color: var(--body-color);
 }
 
 /* CSS Classes */
 .color-primary {
-    color: var(--primary)!important;
+    color: #fff!important;
 }
 
 .color-white {
@@ -100,8 +100,18 @@ a, p, td, form-label {
 }
 
 .logo {
-    width: 17em;
-    padding: 5%;
+    display: flex;
+    align-content: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo img {
+    max-width: 21em;
+    margin-left: 4%;
+    width: auto;
+    height: auto;
+    padding: 15%;
 }
 
 .subTitleHeader {
@@ -147,6 +157,11 @@ a, p, td, form-label {
 .topNavContainer {
     max-width: 100vw;
     position: fixed;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2em;
     height: 3.5rem;
     transition: margin-left 0.7s;
     background-color: var(--primary);
@@ -165,7 +180,7 @@ header {
 }
 
 .baseHamburgerMenu {
-    margin-right: 1.5rem!important;
+    margin-right: 0;
 }
 
 .baseTitleHeader {
@@ -246,6 +261,10 @@ header {
     box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.048);
 }
 
+.form-label {
+    color: var(--body-color) !important;
+}
+
 .inpAddon {
     background-color: var(--primary);
     color: white;
@@ -273,13 +292,37 @@ header {
 
 /* Vuln Add CSS */
 .vulnRTEditor {
+    background-color: white;
+}
+
+.vulnRTEditor * {
     color: black;
     background-color: white;
 }
 
+#headerSignIn, #headerSignedIn, .sidebarBtn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 14px;
+    width: 5em;
+    font-weight: 600
+}
+
+#headerSignIn:hover, #headerSignedIn:hover, .sidebarBtn:hover {
+    background-color: var(--bg-primary-dark);
+    border: 0px;
+    border-radius: 10%;
+}
+
+#headerSignIn i, #headerSignedIn i, .sidebarBtn i {
+    font-size: 20px;
+    margin: 4% 0%;
+}
+
 .vtSubmitBtn {
-    width: 50%;
-    height: 5rem;
+    padding: 0.5em 3em;
     font-size: 1.3rem;
 }
 
@@ -310,9 +353,6 @@ header {
 }
 
 .attachmentTitle {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
 }
 
 /* Profile CSS */
@@ -328,10 +368,32 @@ header {
     font-size: large!important;
 }
 
+.nav-link {
+    font-size: 16px !important;
+}
+
+.nav-tabs .nav-link {
+    color: var(--body-color);
+}
+
+.nav-link.active {
+    color: var(--body-color) !important;
+    background-color: var(--bg-primary) !important;
+    border-bottom: solid 2px var(--body-bg) !important;
+}
+
+.nav-link:hover {
+    background-color: var(--bg-primary-dark) !important;
+}
+
 /* About CSS */
 #aboutHeaderLi {
     list-style: none;
     padding-left: 0;
+}
+
+.border-primary {
+    border-color: var(--body-color) !important;
 }
 
 #aboutHeader {
@@ -376,7 +438,7 @@ header {
 /* Mobile Media-Queries */
 /* !!!!!!!!!!!!!!!!!!!! */
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 720px) {
     /* Index CSS */
     .titleHeader {
         margin-bottom: 1.2rem;
@@ -395,7 +457,7 @@ header {
 
     /* Base CSS */
     .baseHamburgerMenu {
-        margin-right: 1.5rem!important;
+        margin-right: 0;
     }
     
     .baseTitleHeader {
@@ -418,5 +480,30 @@ header {
         font-size: 2.5rem;
         font-weight: 400;
         margin: 1rem 0 0 0;
+    }
+
+    .topNavContainer {
+        padding: 0 0;
+    }
+
+    /* Logo CSS */
+    .logo {
+        display: flex;
+        align-content: center;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .logo img {
+        max-width: 12em;
+        width: auto;
+        height: auto;
+        margin-left: 4%;
+        padding: 0%;
+    }
+    
+    #headerSignIn, #headerSignedIn, .sidebarBtn {
+        width: 5em;
+        font-size: 12px;
     }
 }
