@@ -270,8 +270,6 @@ router.post(
                     }
                 }
 
-                console.log(fileDBEntries);
-
                 let vulnerability = new Vulnerability({
                     vtid: generatedVtid,
                     cvss: req.body.cvssScore,
@@ -469,7 +467,6 @@ router.delete(
 
         // TODO: Fix vuln folder deletion on vuln deletion
         fs.access(`files/${vuln.vtid}/`, (err) => {
-            console.log(err);
             if (!err) {
                 fs.rmdir(
                     `files/${vuln.vtid}`,

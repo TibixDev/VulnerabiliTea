@@ -352,7 +352,7 @@ if ($("#activityLoader").length) {
         `<div class="activityElement my-3 color-white">
             <div class="d-flex flex-column float-start me-3 bg-lprimary rounded activitySection">
                 <i onclick="ProcessVote(this)" class="fas fa-arrow-up mx-2 mt-2 handCur voteArrow upvoteArrow ${vuln.ownVote == 'UP' ? 'voteTriggered' : ''}"></i>
-                <p class="mx-2 ${vuln.ownVote == 'UP' || vuln.ownVote == 'DOWN' ? 'voteTriggered' : ''} voteScore" style="margin: 0.3em;">${vuln.voteScore || 0}
+                <p class="mx-2 color-white ${vuln.ownVote == 'UP' || vuln.ownVote == 'DOWN' ? 'voteTriggered' : ''} voteScore" style="margin: 0.3em;">${vuln.voteScore || 0}
                 </p>
                 <i onclick="ProcessVote(this)" class="fas fa-arrow-down mx-2 handCur voteArrow downvoteArrow ${vuln.ownVote == 'DOWN' ? 'voteTriggered' : ''}"></i> 
             </div>
@@ -366,7 +366,7 @@ if ($("#activityLoader").length) {
                      <h5 class="d-inline float-end me-2">${vuln.authorName}
                      </h5>
                   </a>
-                  <p class="mt-1">${vuln.affectedProduct} - ${vuln.affectedFeature} - ${vuln.type} (<strong class="cvssScore">${vuln.cvss}</strong>)
+                  <p class="mt-1 color-white">${vuln.affectedProduct} - ${vuln.affectedFeature} - ${vuln.type} (<strong class="cvssScore">${vuln.cvss}</strong>)
                   </p>
                </div>
             </div>

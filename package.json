@@ -22,7 +22,7 @@
     "express-session": "^1.17.1",
     "express-validator": "^6.8.1",
     "file-type": "^16.2.0",
-    "mongoose": "^5.11.8",
+    "mongoose": "^5.12.5",
     "node-schedule": "^2.0.0",
     "nodemon": "^2.0.7",
     "pug": "^3.0.0"

@@ -24,9 +24,13 @@ html, body {
     height: 100%;
 }
 
+a, p, td, form-label {
+    color: var(--primary)!important;
+}
+
 /* CSS Classes */
 .color-primary {
-    color: #814A26!important;
+    color: var(--primary)!important;
 }
 
 .color-white {
@@ -61,6 +65,22 @@ html, body {
     text-decoration: line-through;
 }
 
+/* Button Classes, use this for any button, btn override doesn't work */
+/* No, there is no better way to darken or brighten, trust me */
+.vbutton {
+    color: var(--body-color)!important;
+    background-color:var(--bg-primary-light);
+}
+
+.vbutton:hover {
+    filter: brightness(1.1);
+}
+
+/* More replacement for overrides :^) */
+.vCheckbox input {
+    color: var(--body-color)!important;
+    background-color:var(--bg-primary-light);
+}
 
 /* Index CSS */
 /* TODO: Fix some class names */
@@ -77,6 +97,11 @@ html, body {
     font-weight: 300;
     font-style: italic;
     font-size: 5rem;
+}
+
+.logo {
+    width: 17em;
+    padding: 5%;
 }
 
 .subTitleHeader {
