@@ -33,7 +33,7 @@ block content
                                             strong Public Vulnerability Count: 
                                         | #{vulns.length || 0}
                                     
-                                    strong.border-bottom.border-primary.color-primary Bio:
+                                    strong.border-bottom.border-primary Bio:
                                     .bio(uid=user._id)
                     .tab-pane.fade#vulnTab.col-12.col-xl-7.col-l-9.col-md-10.col-sm-12(role="tabpanel" aria-labelledby="vulnTabControl")
                         +vulnTable(vulns)

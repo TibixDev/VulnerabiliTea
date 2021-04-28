@@ -1,12 +1,14 @@
 /* Global CSS */
 :root {
-    --primary: #0a8a00;
+	--primary: #814A26;
     --primary-light: #97572d;
-    --bg-primary: #0a8a00;
-    --bg-primary-light: #0a8a00;
-    --bg-primary-dark: #076800;
-    --body-bg: #242424;
-    --body-color: white;
+    --bg-primary: #492a15;
+    --bg-primary-light: #774a2c;
+    --bg-primary-dark: #57321a;
+    --body-bg: #ffe8d6;
+    --body-color: #774a2c;
+    --sb: #5a3319;
+    --sb-hover: #442815;
 }
 
 body {
@@ -24,13 +26,34 @@ html, body {
     height: 100%;
 }
 
-a, p, td {
+a, p, td, strong {
     color: var(--body-color);
+}
+
+
+.btn {
+    background-color: var(--bg-primary-light);
+    color: var(--body-bg);
+}
+
+.btn:hover {
+    color: var(--body-bg);
+    filter: brightness(1.1);
+}
+
+/* More replacement for overrides :^) */
+.form-label {
+    color: var(--body-color) !important;
+}
+
+.form-check-input:active  {
+    color: var(--body-color)!important;
+    background-color:var(--bg-primary-light);
 }
 
 /* CSS Classes */
 .color-primary {
-    color: #fff!important;
+    color: var(--primary)!important;
 }
 
 .color-white {
@@ -65,21 +88,8 @@ a, p, td {
     text-decoration: line-through;
 }
 
-/* Button Classes, use this for any button, btn override doesn't work */
-/* No, there is no better way to darken or brighten, trust me */
-.vbutton {
-    color: var(--body-color)!important;
-    background-color:var(--bg-primary-light);
-}
-
-.vbutton:hover {
-    filter: brightness(1.1);
-}
-
-/* More replacement for overrides :^) */
-.vCheckbox input {
-    color: var(--body-color)!important;
-    background-color:var(--bg-primary-light);
+.handCur {
+    cursor: pointer;
 }
 
 /* Index CSS */
@@ -97,21 +107,6 @@ a, p, td {
     font-weight: 300;
     font-style: italic;
     font-size: 5rem;
-}
-
-.logo {
-    display: flex;
-    align-content: center;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.logo img {
-    max-width: 21em;
-    margin-left: 4%;
-    width: auto;
-    height: auto;
-    padding: 15%;
 }
 
 .subTitleHeader {
@@ -179,6 +174,20 @@ header {
     font-size: large;
 }
 
+.logo {
+    display: flex;
+    align-content: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo img {
+    max-width: 21em;
+    margin-left: 4%;
+    width: auto;
+    height: auto;
+}
+
 .baseHamburgerMenu {
     margin-right: 0;
 }
@@ -211,7 +220,7 @@ header {
     position: fixed;
     z-index: 1;
     left: 0;
-    background-color: var(--bg-primary);;
+    background-color: var(--sb);
     color: white;
     margin-top: 3.5rem;
     overflow-x: hidden;
@@ -229,7 +238,7 @@ header {
 
 .sidebar a:hover {
     color: rgb(226, 226, 226);
-    background-color: var(--bg-primary-dark);
+    background-color: var(--sb-hover);
 }
 
 .content {
@@ -259,10 +268,6 @@ header {
 
 .loginInput {
     box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.048);
-}
-
-.form-label {
-    color: var(--body-color) !important;
 }
 
 .inpAddon {
@@ -337,14 +342,11 @@ header {
 .trumbowyg-button-pane {
     z-index: 0;
 }
+
 /* Vuln View CSS */
 #detailsTab {
     font-size: 1.2rem;
     font-weight: 400;
-}
-
-.handCur {
-    cursor: pointer;
 }
 
 .attachmentContainer {
@@ -353,8 +355,8 @@ header {
 }
 
 .attachmentTitle {
+    color: var(--body-color);
 }
-
 /* Profile CSS */
 .profileNameCol {
     height: 10rem;
@@ -368,22 +370,21 @@ header {
     font-size: large!important;
 }
 
-.nav-link {
-    font-size: 16px !important;
-}
-
 .nav-tabs .nav-link {
     color: var(--body-color);
 }
 
 .nav-link.active {
-    color: var(--body-color) !important;
-    background-color: var(--bg-primary) !important;
-    border-bottom: solid 2px var(--body-bg) !important;
+    color: var(--body-bg) !important;
+    background-color: var(--bg-primary-light) !important;
+    border: 0!important;
 }
 
 .nav-link:hover {
-    background-color: var(--bg-primary-dark) !important;
+    color: var(--body-bg) !important;
+    background-color: var(--bg-primary-light) !important;
+    filter: brightness(1.1);
+    border: 0!important;
 }
 
 /* About CSS */

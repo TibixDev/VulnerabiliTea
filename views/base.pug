@@ -16,12 +16,10 @@ html
         include includes/body_includes.pug
         header#header.container-fluid.topNavContainer
             .row.topNavRow.justify-content-center
-                headerCol.text-center.d-flex.align-items-center
-                    .sidebarBtn.color-white(onclick='sidebarHandler();')
+                .headerCol.text-center.d-flex.align-items-center
+                    .sidebarBtn.handCur.color-white(onclick='sidebarHandler();')
                         i.fas.fa-bars.fa-2x.baseHamburgerMenu
                         | Menu
-                        //i.color-white.fas.fa-mug-hot.fa-2x.baseTitleIco
-                    //h1.baseTitleHeader.color-white VulnerabiliTea
             .logo
                 a(href='/')
                 img(src="/img/final_white.png")
