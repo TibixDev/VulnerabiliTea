@@ -63,6 +63,7 @@ app.use('/vuln', routes.vuln);
 app.use('/activity', routes.activity);
 app.use('/user', routes.user);
 app.use('/files', routes.files);
+app.use('/settings', routes.settings);
 
 // LetsEncrypt
 if (process.env.ACME_URI && process.env.ACME_SERVE) {

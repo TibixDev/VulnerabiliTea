@@ -1,0 +1,31 @@
+extends base.pug
+
+block headblock
+    - var title = 'Settings'
+
+mixin colorSchemeCard(cardtitle, themeclass)
+    .col-lg-3.col-md-6.col-sm-1.text-center.my-3
+        .card.mx-4
+            .card-header.featureCardHeader.handCur(onclick="setTheme('" + themeclass + "');")
+                .cardTitleHolder.schemeCard
+                    h3.featureCardTitle= cardtitle
+            .card-body(class=themeclass)
+                .dot(style="background-color: var(--primary);")
+                .dot(style="background-color: var(--primary-light);")
+                .dot(style="background-color: var(--bg-primary);")
+                .dot(style="background-color: var(--bg-primary-light);")
+                .dot(style="background-color: var(--bg-primary-dark);")
+                .dot(style="background-color: var(--body-bg);")
+                .dot(style="background-color: var(--sb);")
+                .dot(style="background-color: var(--sb-hover);")
+
+block content
+    .container-fluid.justify-content-center.mt-3
+        .row.justify-content-center
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.border-bottom.border-primary.color-primary.mb-4
+                h1 Settings
+            .col-xl-8.col-lg-10.col-md-12.col-sm-12.color-primary
+                h2 Color Schemes
+                    .row
+                        +colorSchemeCard("Tea", "theme-tea")
+                        +colorSchemeCard("Matrix", "theme-hack")

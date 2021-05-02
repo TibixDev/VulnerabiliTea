@@ -50,7 +50,6 @@ router.post(
             })
     ], helpers.processValidationErrs,
     async (req, res) => {
-        let errors = [];
         let user = await User.findById(req.body.uid, "bio").lean();
         if (!user) {
             helpers.sendStyledJSONErr([{

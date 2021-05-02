@@ -617,3 +617,22 @@ if ($('.bio').length) {
         }
     })
 }
+
+// ------
+// Themes
+// ------
+
+// Set a given theme/color-scheme
+function setTheme(themeName) {
+    try {
+        localStorage.setItem('theme', themeName);
+        document.documentElement.className = themeName;
+    } catch(e) {
+        console.log(`SetTheme (${themeName}) failed with error: ${e.message}`);
+    }
+}
+
+// OnLoad Theme Manager
+if (localStorage.getItem('theme')) {
+    setTheme(localStorage.getItem('theme'));
+}

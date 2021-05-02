@@ -1,10 +1,9 @@
 extends ../base.pug
 
 mixin attachmentEntry(attachment)
-    .bg-lprimary.rounded.color-white.text-center.mx-1.attachmentContainer
-        a.color-white(href='/files/' + vuln.vtid + '/' + attachment.file + (token ? '?token=' + token : ''))
-            i.fas.fa-file-archive.fa-3x.mt-2
-            p.my-1.mx-1.attachmentTitle= attachment.file
+    a.bg-lprimary.rounded.color-white.text-center.mx-1.attachmentContainer(href='/files/' + vuln.vtid + '/' + attachment.file + (token ? '?token=' + token : ''))
+        i.fas.fa-file-archive.fa-3x.mt-2
+        p.my-1.mx-1.attachmentTitle= attachment.file
 
 block headblock
     - var title = 'View Discovery'
