@@ -16,5 +16,12 @@
     },
     "upload": {
         "maxFileSizeInMB": 50
+    },
+    "mailsvc": {
+        "host": "localhost",
+        "port": 587,
+        "secure": true,
+        "user": "yes",
+        "password": "yes"
     }
 }

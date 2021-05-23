@@ -5,10 +5,23 @@ const express = require("express"),
         body,
         validationResult
     } = require("express-validator"),
-    bcrypt = require("bcrypt");
+    bcrypt = require("bcrypt"),
+    nodemailer = require("nodemailer"),
+    Config = require("./config/config.json");
 
 // Global vars
 const saltRounds = 10;
+
+// Email Service (SMTP)
+let transporter = nodemailer.createTransport({
+    host: Config.mailsvc.host,
+    port: Config.mailsvc.port,
+    secure: Config.mailsvc.secure, // make this true for 465, false for other ports
+    auth: {
+      user: Config.mailsvc.user,
+      pass: Config.mailsvc.pass,
+    },
+})
 
 // Model Imports
 const User = require("../db/models/user.js");
