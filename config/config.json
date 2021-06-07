@@ -19,9 +19,9 @@
     },
     "mailsvc": {
         "host": "localhost",
-        "port": 587,
+        "port": 465,
         "secure": true,
-        "user": "yes",
-        "password": "yes"
+        "user": "test@localhost",
+        "password": "test"
     }
 }

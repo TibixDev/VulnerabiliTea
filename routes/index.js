@@ -5,9 +5,9 @@ const express = require("express"),
         body,
         validationResult
     } = require("express-validator"),
-    bcrypt = require("bcrypt"),
+    bcrypt = require("bcryptjs"),
     nodemailer = require("nodemailer"),
-    Config = require("./config/config.json");
+    Config = require("../config/config.json");
 
 // Global vars
 const saltRounds = 10;
@@ -18,10 +18,18 @@ let transporter = nodemailer.createTransport({
     port: Config.mailsvc.port,
     secure: Config.mailsvc.secure, // make this true for 465, false for other ports
     auth: {
-      user: Config.mailsvc.user,
-      pass: Config.mailsvc.pass,
+        user: Config.mailsvc.user,
+        pass: Config.mailsvc.pass,
     },
 })
+
+transporter.verify(function(err, success) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Server is ready to take our messages");
+    }
+  });
 
 // Model Imports
 const User = require("../db/models/user.js");
@@ -261,6 +269,14 @@ router.post(
             password: req.body.password,
         });
         await user.save();
+        let mailInfo = transporter.sendMail({
+            from: '"☕ VulnerabiliTea" <noreply@tibix.site>',
+            to: req.body.email, // list of receivers
+            subject: "☕ VulnerabiliTea Mail Verification", // Subject line
+            text: "There will be a link here one day.", // plain text body
+            html: "<b>There will be a link here one day.</b>", // html body
+        });
+        console.log("Message sent: %s", mailInfo.messageId);
         req.flash("msgs", {
             noteType: "note-success",
             pretext: "Success",
