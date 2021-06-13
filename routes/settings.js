@@ -10,8 +10,6 @@ const express = require('express'),
     router = express.Router();
 
 // Render Settings Pages
-router.get("/", (req, res) => {
-    res.render("settings");
-})
+router.get("/", (req, res) => { res.render("settings") });
 
 module.exports = router;

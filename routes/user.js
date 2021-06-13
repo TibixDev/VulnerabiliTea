@@ -11,9 +11,7 @@ const express = require("express"),
 // Enable Multipart-Form-Data and Uploads
 router.use(
     fileUpload({
-        limits: {
-            fileSize: Config.upload.maxFileSizeInMB * 1024 * 1024,
-        },
+        limits: { fileSize: Config.upload.maxFileSizeInMB * 1024 * 1024 },
         abortOnLimit: true,
         createParentPath: true,
         safeFileNames: true,
@@ -24,12 +22,7 @@ router.use(
 // Display logged-in user profile
 router.get("/profile", helpers.isLoggedIn, async (req, res) => {
     let user = await User.findById(req.session.user, "-email -password -bio");
-    let vulns = await Vulnerability.find(
-        {
-            author: req.session.user,
-        },
-        "-description -attachments"
-    );
+    let vulns = await Vulnerability.find({ author: req.session.user }, "-description -attachments");
     res.render("user/profile.pug", { user, vulns, ownProfile: true });
 });
 
@@ -52,12 +45,14 @@ router.post(
     async (req, res) => {
         let user = await User.findById(req.body.uid, "bio").lean();
         if (!user) {
-            helpers.sendStyledJSONErr([{
-                msg: "No user corresponding to the specified UID was found.",
-                type: "notFound",
-            }])
+            return helpers.sendStyledJSONErr(res,
+                {
+                    msg: "No user corresponding to the specified UID was found.",
+                    type: "notFound",
+                },
+            400);
         }
-        res.send({status: 'success', bio: user.bio})
+        res.send({ status: 'success', bio: user.bio })
     }
 );
 
@@ -80,8 +75,7 @@ router.post(
             })
             .isLength({ min: 15, max: 4096 })
             .withMessage({
-                text:
-                    "The bio specified didn't match the desired length. (15 - 4096 characters)",
+                text: "The bio specified didn't match the desired length. (15 - 4096 characters)",
                 type: "bioCharLimitMismatch",
             }),
     ],
@@ -110,13 +104,7 @@ router.get("/profile/:id", async (req, res) => {
     if (!user) {
         return helpers.sendError(res, 400);
     }
-    let vulns = await Vulnerability.find(
-        {
-            public: true,
-            author: req.params.id,
-        },
-        "-description -attachments"
-    );
+    let vulns = await Vulnerability.find({ public: true, author: req.params.id }, "-description -attachments");
     res.render("user/profile.pug", { user, vulns });
 });
 

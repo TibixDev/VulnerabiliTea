@@ -17,19 +17,15 @@ router.post("/getActivity", async (req, res) => {
     if (req.body.skipCount) {
         skipCount = 0;
     }
-    let vulns = await Vulnerability.find({
-        public: true,
-    }, 'author vtid cvss type affectedProduct affectedFeature votes')
-        .lean()
-        .sort({ dateReported: -1 })
-        .skip(req.body.skipCount * Config.activity.vulnsPerRequest)
-        .limit(Config.activity.vulnsPerRequest);
+    let vulns = await Vulnerability.find({ public: true },
+        'author vtid cvss type affectedProduct affectedFeature votes')
+            .lean()
+            .sort({ dateReported: -1 })
+            .skip(req.body.skipCount * Config.activity.vulnsPerRequest)
+            .limit(Config.activity.vulnsPerRequest);
 
     if (vulns.length == 0) {
-        return res.status(400).json({
-            status: "failed",
-            err: "endReached"
-        });
+        return res.status(400).json({ status: "failed", err: "endReached" });
     }
 
     for (vuln of vulns) {
@@ -39,11 +35,7 @@ router.post("/getActivity", async (req, res) => {
             if (vote.uid == req.session.user) {
                 ownVote = vote.voteStatus;
             }
-            if (vote.voteStatus == 'UP') {
-                voteScore++;
-            } else {
-                voteScore--;
-            }
+            voteScore += (vote.voteStatus == 'UP')? 1 : -1;
         }
         vuln.voteScore = voteScore;
         vuln.ownVote = ownVote;
@@ -53,17 +45,16 @@ router.post("/getActivity", async (req, res) => {
         let authorObj = await User.findById(vuln.author, 'username').lean();
         vuln.authorName = authorObj.username;
     }
-    return res.json({
-        status: "success",
-        vulns: vulns
-    });
+    return res.json({ status: "success", vulns: vulns });
 });
 
 router.post("/processVote", helpers.isLoggedInPOST, [
-    body("vtid").exists().withMessage({
-        text: "There was no VTID specified.",
-        type: "noVTID"
-    }),
+    body("vtid")
+        .exists()
+        .withMessage({
+            text: "There was no VTID specified.",
+            type: "noVTID"
+        }),
     body("voteType")
         .exists()
         .withMessage({
@@ -76,8 +67,7 @@ router.post("/processVote", helpers.isLoggedInPOST, [
             type: "invalidVoteType"
         })
     ], helpers.processValidationErrs, async (req, res) => {
-        let vuln = await Vulnerability.findOne({vtid: req.body.vtid}, 'votes public');
-    
+        let vuln = await Vulnerability.findOne({ vtid: req.body.vtid }, 'votes public');
         if (!vuln) {
             return helpers.sendStyledJSONErr(res,
                 {
@@ -86,7 +76,6 @@ router.post("/processVote", helpers.isLoggedInPOST, [
                 },
             400);
         }
-
         if (!vuln.public) {
             return helpers.sendStyledJSONErr(res,
                 {
@@ -95,18 +84,16 @@ router.post("/processVote", helpers.isLoggedInPOST, [
                 },
             400);
         }
-
         async function ProcessVote(voteType) {
             if (!vuln.votes.filter(vote => vote.uid == req.session.user).length > 0) {
                 vuln.votes.push({uid: req.session.user, voteStatus: voteType});
                 await vuln.save();
             } else {
-                vuln.votes.map(vote => vote.uid == req.session.user ? vote.voteStatus = voteType : vote);
+                vuln.votes.map(vote => (vote.uid == req.session.user) ? vote.voteStatus = voteType : vote);
                 await vuln.save();
             }
             res.json({status: 'success'})
         }
-
         switch (req.body.voteType) {
             case 'UP':
                     ProcessVote('UP');

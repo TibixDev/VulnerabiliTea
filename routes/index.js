@@ -1,10 +1,7 @@
 // Imports
 const express = require("express"),
     router = express.Router(),
-    {
-        body,
-        validationResult
-    } = require("express-validator"),
+    { body, validationResult } = require("express-validator"),
     bcrypt = require("bcryptjs"),
     nodemailer = require("nodemailer"),
     Config = require("../config/config.json");
@@ -29,7 +26,7 @@ transporter.verify(function(err, success) {
     } else {
       console.log("Server is ready to take our messages");
     }
-  });
+});
 
 // Model Imports
 const User = require("../db/models/user.js");
@@ -72,7 +69,7 @@ router.post("/login", async (req, res) => {
                 noteType: "note-danger",
                 pretext: "Error",
                 value: "The credentials specified were invalid",
-            }, ],
+            }]
         });
     }
     bcrypt.compare(req.body.password, user.password, (err, result) => {
@@ -82,7 +79,7 @@ router.post("/login", async (req, res) => {
                     noteType: "note-danger",
                     pretext: "Error",
                     value: "There was a server error",
-                }, ],
+                }]
             });
         }
         if (result == true) {
@@ -94,7 +91,7 @@ router.post("/login", async (req, res) => {
                 noteType: "note-danger",
                 pretext: "Error",
                 value: "The credentials specified were invalid",
-            }, ],
+            }]
         });
     });
 });
@@ -116,76 +113,32 @@ router.post(
     },
     [
         body("email")
-        .exists()
-        .withMessage({
-            text: "There was no email specified.",
-            type: "noEmail"
-        })
-        .isEmail()
-        .withMessage({
-            text: "The email specified was invalid.",
-            type: "invalidEmail"
-        })
-        .isLength({
-            min: 5,
-            max: 48
-        })
-        .withMessage({
-            text: "The email specified didn't match the desired length (5-48 Characters)",
-            type: "emailCharLimitMismatch"
-        })
-        .normalizeEmail()
-        .custom((value, {
-            req
-        }) => {
-            return new Promise((resolve, reject) => {
-                User.findOne({
-                    email: req.body.email
-                }, (err, user) => {
-                    if (err) {
-                        reject({
-                            text: "Server Error.",
-                            type: "serverError"
-                        });
-                    }
-                    if (user) {
-                        reject({
-                            text: "The specified email is already in use.",
-                            type: "emailInUse"
-                        });
-                    }
-                    resolve(true);
-                });
-            });
-        }),
-        body("username")
-        .exists()
-        .withMessage({
-            text: "There was no username specified.",
-            type: "noUsername"
-        })
-        .isAlphanumeric()
-        .withMessage({
-            text: "The username specified was not alphanumeric.",
-            type: "usernameNotAlphanumeric"
-        })
-        .isLength({
-            min: 3,
-            max: 16
-        })
-        .withMessage({
-            text: "The username specified didn't match the desired length (3-16 Characters)",
-            type: "usernameCharLimitMismatch"
-        })
-        .escape()
-        .custom((value, {
-            req
-        }) => {
-            return new Promise((resolve, reject) => {
-                User.findOne({
-                        username: req.body.username
-                    },
-                    (err, user) => {
+            .exists()
+            .withMessage({
+                text: "There was no email specified.",
+                type: "noEmail"
+            })
+            .isEmail()
+            .withMessage({
+                text: "The email specified was invalid.",
+                type: "invalidEmail"
+            })
+            .isLength({
+                min: 5,
+                max: 48
+            })
+            .withMessage({
+                text: "The email specified didn't match the desired length (5-48 Characters)",
+                type: "emailCharLimitMismatch"
+            })
+            .normalizeEmail()
+            .custom((value, {
+                req
+            }) => {
+                return new Promise((resolve, reject) => {
+                    User.findOne({
+                        email: req.body.email
+                    }, (err, user) => {
                         if (err) {
                             reject({
                                 text: "Server Error.",
@@ -194,43 +147,89 @@ router.post(
                         }
                         if (user) {
                             reject({
-                                text: "The specified username is already in use.",
-                                type: "usernameInUse"
+                                text: "The specified email is already in use.",
+                                type: "emailInUse"
                             });
                         }
                         resolve(true);
-                    }
-                );
-            });
-        }),
+                    });
+                });
+            }),
+        body("username")
+            .exists()
+            .withMessage({
+                text: "There was no username specified.",
+                type: "noUsername"
+            })
+            .isAlphanumeric()
+            .withMessage({
+                text: "The username specified was not alphanumeric.",
+                type: "usernameNotAlphanumeric"
+            })
+            .isLength({
+                min: 3,
+                max: 16
+            })
+            .withMessage({
+                text: "The username specified didn't match the desired length (3-16 Characters)",
+                type: "usernameCharLimitMismatch"
+            })
+            .escape()
+            .custom((value, {
+                req
+            }) => {
+                return new Promise((resolve, reject) => {
+                    User.findOne({
+                            username: req.body.username
+                        },
+                        (err, user) => {
+                            if (err) {
+                                reject({
+                                    text: "Server Error.",
+                                    type: "serverError"
+                                });
+                            }
+                            if (user) {
+                                reject({
+                                    text: "The specified username is already in use.",
+                                    type: "usernameInUse"
+                                });
+                            }
+                            resolve(true);
+                        }
+                    );
+                });
+            }),
         body("password")
-        .exists()
-        .withMessage("There was no password specified.")
-        .isLength({
-            min: 5,
-            max: 128
-        })
-        .withMessage({
-            text: "The password specified didn't match the desired length (5-128 Characters)",
-            type: "passwordCharLimitMismatch",
-        }),
+            .exists()
+            .withMessage("There was no password specified.")
+            .isLength({
+                min: 5,
+                max: 128
+            })
+            .withMessage({
+                text: "The password specified didn't match the desired length (5-128 Characters)",
+                type: "passwordCharLimitMismatch",
+            }),
         body("passwordVerify")
-        .exists()
-        .withMessage({
-            text: "No password was specified in the confirmation field.",
-            type: "noPasswordConfirmation"
-        })
-        .custom((value, {
-            req
-        }) => value === req.body.password)
-        .withMessage({
-            text: "The passwords specified didn't match.",
-            type: "passwordVerifyMismatch",
-        }),
-        body("tosBox").exists().withMessage({
-            text: "You must accept the Terms and Conditions to register.",
-            type: "tosAgreementMissing",
-        }),
+            .exists()
+            .withMessage({
+                text: "No password was specified in the confirmation field.",
+                type: "noPasswordConfirmation"
+            })
+            .custom((value, {
+                req
+            }) => value === req.body.password)
+            .withMessage({
+                text: "The passwords specified didn't match.",
+                type: "passwordVerifyMismatch",
+            }),
+        body("tosBox")
+            .exists()
+            .withMessage({
+                text: "You must accept the Terms and Conditions to register.",
+                type: "tosAgreementMissing",
+            }),
     ],
     async (req, res) => {
         if (req.session.user) {
@@ -245,15 +244,10 @@ router.post(
                     value: err.msg.text,
                 });
             }
-            return res.render("register", {
-                msgs: errList
-            });
+            return res.render("register", { msgs: errList });
         }
         try {
-            req.body.password = await bcrypt.hash(
-                req.body.password,
-                saltRounds
-            );
+            req.body.password = await bcrypt.hash( req.body.password, saltRounds );
         } catch (err) {
             return res.render("register", {
                 msgs: {
@@ -295,16 +289,14 @@ router.get("/logout", (req, res) => {
             noteType: "note-info",
             pretext: "Info",
             value: "Logged out successfully",
-        }, ]);
-        setTimeout(() => {
-            req.session.destroy();
-        }, 1000);
+        }]);
+        setTimeout(() => { req.session.destroy(); }, 1000);
     } else {
         req.flash("msgs", [{
             noteType: "note-danger",
             pretext: "Error",
             value: "You need to be logged-in to log-out.",
-        }, ]);
+        }]);
     }
     res.redirect("/login");
 });
