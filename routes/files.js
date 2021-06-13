@@ -8,9 +8,7 @@ const express = require('express'),
 
 // Handle: Serve uploads to users with permission
 router.use('/:vtid/:file', async (req, res, next) => {
-    let vuln = await Vulnerability.findOne({
-        vtid: req.params.vtid
-    }, 'author public tokens').lean();
+    let vuln = await Vulnerability.findOne({vtid: req.params.vtid}, 'author public tokens').lean();
     if (!vuln) {
         return helpers.sendError(res, 400);
     }
@@ -18,7 +16,7 @@ router.use('/:vtid/:file', async (req, res, next) => {
         if (!vuln.public) {
             if (req.query.token) {
                 if (!await helpers.tokenValid(vuln, req.query.token)) {
-                    console.log('Whoops, token check on file dl failed.')
+                    console.log('Whoops, token check on file DL failed.');
                     return helpers.sendError(res, 403);
                 }
             } else {

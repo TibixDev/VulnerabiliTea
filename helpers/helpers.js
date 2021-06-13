@@ -6,7 +6,7 @@ function isLoggedIn(req, res, next) {
             noteType: "note-warning",
             pretext: "Warning",
             value: "You have to be logged in to access the requested page.",
-        }, ]);
+        }]);
         return res.redirect("/login");
     }
     next();
@@ -22,10 +22,12 @@ function processValidationErrs(req, res, next) {
 
 function isLoggedInPOST(req, res, next) {
     if (!req.session.user) {
-        return sendStyledJSONErr(res, {
-            msg: 'You have to be logged in the access this POST endpoint.',
-            type: 'notLoggedIn'
-        }, 400);
+        return sendStyledJSONErr(res, 
+            {
+                msg: 'You have to be logged in the access this POST endpoint.',
+                type: 'notLoggedIn'
+            }, 
+        400);
     }
     next();
 }
@@ -47,7 +49,7 @@ function sendError(res, errCode) {
         err: {
             code: errCode,
             description: errDescription,
-        },
+        }
     });
 }
 
