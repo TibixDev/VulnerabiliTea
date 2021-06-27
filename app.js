@@ -3,6 +3,7 @@ const express = require('express'),
     app = express(),
     path = require('path'),
     session = require('express-session'),
+    MongoConnection = require('./db/index.js'),
     MongoStore = require('connect-mongodb-session')(session),
     Config = require('./config/config.json'),
     flash = require('connect-flash'),
@@ -77,6 +78,21 @@ app.all('/*', (req, res, next) => {
 }) 
 
 // Host the app on the port specified so it is accessible with a browser
-app.listen(process.env.PORT || Config.port, () => {
+const server = app.listen(process.env.PORT || Config.port, () => {
     console.log(`VulnerabiliTea started on port ${process.env.PORT || Config.port}`);
+});
+
+// Graceful Shutdown
+process.on('SIGINT' || 'SIGTERM', () => {
+    console.info('Shutdown signal received.\nVulnerabiliTea is shutting down...');
+    console.log('Shutting down HTTP server.');
+    server.close(() => {
+        console.log('HTTP server closed.');
+    });
+    console.log('Disconnecting from MongoDB server...');
+    MongoConnection.close(false, () => {
+        console.log('MongoDB connection closed.');
+        console.log('Everything finished, killing process with exit code 0.');
+        process.exit(0);
+    })
 });

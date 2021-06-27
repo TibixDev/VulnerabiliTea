@@ -2,32 +2,10 @@
 const express = require("express"),
     router = express.Router(),
     { body, validationResult } = require("express-validator"),
-    bcrypt = require("bcryptjs"),
-    nodemailer = require("nodemailer"),
-    Config = require("../config/config.json");
+    bcrypt = require("bcryptjs");
 
 // Global vars
 const saltRounds = 10;
-
-// Email Service (SMTP)
-let transporter = nodemailer.createTransport({
-    host: Config.mailsvc.host,
-    port: Config.mailsvc.port,
-    secure: Config.mailsvc.secure, // make this true for 465, false for other ports
-    auth: {
-        user: Config.mailsvc.user,
-        pass: Config.mailsvc.pass,
-    },
-})
-
-transporter.verify(function(err, success) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("Server is ready to take our messages");
-    }
-});
-
 // Model Imports
 const User = require("../db/models/user.js");
 
@@ -58,11 +36,7 @@ router.post("/login", async (req, res) => {
     if (req.session.user) {
         return res.redirect("vuln");
     }
-    let user = await User.findOne({
-            email: req.body.email,
-        },
-        "password _id"
-    );
+    let user = await User.findOne({username: req.body.username}, "password _id");
     if (!user) {
         return res.render("login", {
             msgs: [{
@@ -112,49 +86,6 @@ router.post(
         next();
     },
     [
-        body("email")
-            .exists()
-            .withMessage({
-                text: "There was no email specified.",
-                type: "noEmail"
-            })
-            .isEmail()
-            .withMessage({
-                text: "The email specified was invalid.",
-                type: "invalidEmail"
-            })
-            .isLength({
-                min: 5,
-                max: 48
-            })
-            .withMessage({
-                text: "The email specified didn't match the desired length (5-48 Characters)",
-                type: "emailCharLimitMismatch"
-            })
-            .normalizeEmail()
-            .custom((value, {
-                req
-            }) => {
-                return new Promise((resolve, reject) => {
-                    User.findOne({
-                        email: req.body.email
-                    }, (err, user) => {
-                        if (err) {
-                            reject({
-                                text: "Server Error.",
-                                type: "serverError"
-                            });
-                        }
-                        if (user) {
-                            reject({
-                                text: "The specified email is already in use.",
-                                type: "emailInUse"
-                            });
-                        }
-                        resolve(true);
-                    });
-                });
-            }),
         body("username")
             .exists()
             .withMessage({
@@ -258,19 +189,10 @@ router.post(
             });
         }
         let user = new User({
-            email: req.body.email,
             username: req.body.username,
             password: req.body.password,
         });
         await user.save();
-        let mailInfo = transporter.sendMail({
-            from: '"☕ VulnerabiliTea" <noreply@tibix.site>',
-            to: req.body.email, // list of receivers
-            subject: "☕ VulnerabiliTea Mail Verification", // Subject line
-            text: "There will be a link here one day.", // plain text body
-            html: "<b>There will be a link here one day.</b>", // html body
-        });
-        console.log("Message sent: %s", mailInfo.messageId);
         req.flash("msgs", {
             noteType: "note-success",
             pretext: "Success",

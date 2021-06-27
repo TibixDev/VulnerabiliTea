@@ -21,7 +21,7 @@ router.use(
 
 // Display logged-in user profile
 router.get("/profile", helpers.isLoggedIn, async (req, res) => {
-    let user = await User.findById(req.session.user, "-email -password -bio");
+    let user = await User.findById(req.session.user, "-password -bio");
     let vulns = await Vulnerability.find({ author: req.session.user }, "-description -attachments");
     res.render("user/profile.pug", { user, vulns, ownProfile: true });
 });
@@ -100,7 +100,7 @@ router.get("/profile/:id", async (req, res) => {
     if (req.params.id.length != 24) {
         return helpers.sendError(res, 400);
     }
-    let user = await User.findById(req.params.id, "-email -password -bio").lean();
+    let user = await User.findById(req.params.id, "-password -bio").lean();
     if (!user) {
         return helpers.sendError(res, 400);
     }

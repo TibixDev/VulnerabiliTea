@@ -1,6 +1,6 @@
 {
-    "version": "0.4.3",
-    "versionCode": "Navy Sheep",
+    "version": "0.4.4",
+    "versionCode": "Humming Flamingo",
     "port": 80,
     "session": {
         "connection": "mongodb://localhost/VulnerabiliTea",
@@ -16,12 +16,5 @@
     },
     "upload": {
         "maxFileSizeInMB": 50
-    },
-    "mailsvc": {
-        "host": "localhost",
-        "port": 465,
-        "secure": true,
-        "user": "test@localhost",
-        "password": "test"
     }
 }

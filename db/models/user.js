@@ -1,10 +1,6 @@
 const Mongo = require('../');
 
 let user = {
-    email: {
-        type: String,
-        required: true
-    },
     username: {
         type: String,
         required: true
