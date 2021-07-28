@@ -58,6 +58,7 @@ router.post("/login", async (req, res) => {
         }
         if (result == true) {
             req.session.user = user._id;
+            req.session.username = req.body.username;
             return res.redirect("/vuln");
         }
         return res.render("login", {
@@ -207,6 +208,7 @@ router.get("/logout", (req, res) => {
         // Since we rely on the session when it comes to flash messages
         // We wait a second before invalidating the session
         req.session.user = "";
+        req.session.username = "";
         req.flash("msgs", [{
             noteType: "note-info",
             pretext: "Info",

@@ -43,10 +43,7 @@ app.use(session({
 
 // Pass username to Pug templates when possible
 app.use(async (req, res, next) => {
-    if (req.session.user) {
-        let user = await User.findById(req.session.user, 'username').lean();
-        res.locals.username = user.username;
-    }
+    res.locals.username = req.session.username;
     res.locals.versionCode = Config.versionCode;
     res.locals.version = Config.version;
     next();
@@ -83,16 +80,14 @@ const server = app.listen(process.env.PORT || Config.port, () => {
 });
 
 // Graceful Shutdown
-process.on('SIGINT' || 'SIGTERM', () => {
+process.on('SIGINT' || 'SIGTERM', async () => {
     console.info('Shutdown signal received.\nVulnerabiliTea is shutting down...');
     console.log('Shutting down HTTP server.');
-    server.close(() => {
-        console.log('HTTP server closed.');
-    });
+    await server.close();
+    console.log('HTTP server closed.');
     console.log('Disconnecting from MongoDB server...');
-    MongoConnection.close(false, () => {
-        console.log('MongoDB connection closed.');
-        console.log('Everything finished, killing process with exit code 0.');
-        process.exit(0);
-    })
+    await MongoConnection.close(false);
+    console.log('MongoDB connection closed.');
+    console.log('Everything finished, killing process with exit code 0.');
+    process.exit(0);
 });

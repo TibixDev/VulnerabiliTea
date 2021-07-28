@@ -2,8 +2,8 @@ const mongoose = require("mongoose"),
     Config = require("../config/config.json");
 
 // Connect to database using Mongoose and the config file
-mongoose.connect(process.env.MONGODB_URI || Config.database.connection, { useNewUrlParser: true, useUnifiedTopology: true }).
-  catch(err => console.log(`There was an error connecting to MongoDB: ${err}`));
+mongoose.connect(process.env.MONGODB_URI || Config.database.connection, { useNewUrlParser: true, useUnifiedTopology: true })
+    .catch(err => console.log(`There was an error connecting to MongoDB: ${err}`));
 
 /* Con can act like an event handler, 
    thus we define events which will be logged */
